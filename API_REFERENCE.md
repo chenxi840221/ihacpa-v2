@@ -37,7 +37,7 @@ manager = SandboxManager(config)
 ```python
 async def initialize(self) -> None
 ```
-Initializes all sandboxes and connections.
+Initializes all sandboxes, AI layer, and connections.
 
 **Raises:**
 - `ConnectionError`: If Azure OpenAI connection fails
@@ -47,7 +47,70 @@ Initializes all sandboxes and connections.
 ```python
 manager = SandboxManager()
 await manager.initialize()
-# ... use manager
+# Registers: PyPI, NVD, SNYK, MITRE, GitHub Advisory, Exploit-DB sandboxes
+```
+
+##### **scan_package_with_ai_analysis()** ⭐ *New*
+```python
+async def scan_package_with_ai_analysis(
+    self, 
+    package_name: str, 
+    current_version: Optional[str] = None,
+    include_correlation_analysis: bool = True,
+    include_risk_assessment: bool = True,
+    **kwargs
+) -> Dict[str, Any]
+```
+
+**Enhanced scanning with AI-powered correlation and risk assessment.**
+
+**Parameters:**
+- `package_name` (str): Name of the package to scan
+- `current_version` (str, optional): Current version of the package
+- `include_correlation_analysis` (bool): Enable cross-database correlation
+- `include_risk_assessment` (bool): Enable AI risk assessment
+- `**kwargs`: Additional parameters passed to scanners
+
+**Returns:**
+- `Dict[str, Any]`: Enhanced scan results with AI analysis
+
+**Example:**
+```python
+results = await manager.scan_package_with_ai_analysis(
+    package_name="requests",
+    current_version="2.30.0",
+    include_correlation_analysis=True,
+    include_risk_assessment=True
+)
+
+# Access results
+scan_results = results["scan_results"]
+correlation_analysis = results["correlation_analysis"]
+risk_assessment = results["risk_assessment"]
+```
+
+##### **get_enhanced_scan_summary()** ⭐ *New*
+```python
+async def get_enhanced_scan_summary(
+    self, 
+    scan_results: Dict[str, Any]
+) -> Dict[str, Any]
+```
+
+**Get enhanced summary with AI insights.**
+
+**Parameters:**
+- `scan_results` (dict): Results from `scan_package_with_ai_analysis()`
+
+**Returns:**
+- `Dict[str, Any]`: Enhanced summary with key insights
+
+**Example:**
+```python
+summary = await manager.get_enhanced_scan_summary(results)
+print(f"Overall Risk: {summary['risk_insights']['overall_package_risk']}")
+print(f"Priority Vulns: {summary['risk_insights']['top_priority_vulnerabilities']}")
+```
 await manager.cleanup()
 ```
 
@@ -254,6 +317,247 @@ def get_provider_info(self) -> Dict[str, Any]
 
 **Returns:**
 - `Dict[str, Any]`: Information about the AI provider
+
+## 🤖 **AI Agent APIs** ⭐ *New*
+
+### **CrossDatabaseCorrelationAnalyzer**
+
+AI-powered analyzer for correlating vulnerabilities across multiple databases.
+
+#### **Constructor**
+```python
+from src.ai_layer.agents import CrossDatabaseCorrelationAnalyzer
+
+analyzer = CrossDatabaseCorrelationAnalyzer(ai_factory=None)
+```
+
+#### **Methods**
+
+##### **analyze_cross_database_results()**
+```python
+async def analyze_cross_database_results(
+    self,
+    package_name: str,
+    scan_results: Dict[str, ScanResult]
+) -> CrossDatabaseAnalysis
+```
+
+**Perform comprehensive cross-database correlation analysis.**
+
+**Parameters:**
+- `package_name` (str): Name of the scanned package
+- `scan_results` (dict): Dictionary of scan results from different sources
+
+**Returns:**
+- `CrossDatabaseAnalysis`: Comprehensive analysis with correlations and insights
+
+**Example:**
+```python
+analyzer = CrossDatabaseCorrelationAnalyzer()
+correlation_analysis = await analyzer.analyze_cross_database_results(
+    package_name="requests", 
+    scan_results=scan_results
+)
+
+print(f"Unique Vulnerabilities: {len(correlation_analysis.unique_vulnerabilities)}")
+print(f"Correlations Found: {len(correlation_analysis.correlations)}")
+print(f"AI Overall Risk: {correlation_analysis.ai_overall_risk_assessment}")
+```
+
+### **AIRiskAssessor**
+
+AI-powered risk assessment engine for comprehensive vulnerability analysis.
+
+#### **Constructor**
+```python
+from src.ai_layer.agents import AIRiskAssessor, ThreatContext
+
+risk_assessor = AIRiskAssessor(ai_factory=None)
+```
+
+#### **Methods**
+
+##### **assess_vulnerability_risk()**
+```python
+async def assess_vulnerability_risk(
+    self,
+    vulnerability: VulnerabilityInfo,
+    package_name: str,
+    context: ThreatContext = ThreatContext.PRODUCTION,
+    business_context: Optional[Dict[str, Any]] = None
+) -> ComprehensiveRiskAssessment
+```
+
+**Perform comprehensive risk assessment for a single vulnerability.**
+
+**Parameters:**
+- `vulnerability` (VulnerabilityInfo): Vulnerability to assess
+- `package_name` (str): Name of the affected package
+- `context` (ThreatContext): Deployment/threat context
+- `business_context` (dict, optional): Business context information
+
+**Returns:**
+- `ComprehensiveRiskAssessment`: Detailed risk assessment
+
+##### **assess_package_risk_profile()**
+```python
+async def assess_package_risk_profile(
+    self,
+    vulnerabilities: List[VulnerabilityInfo],
+    package_name: str,
+    context: ThreatContext = ThreatContext.PRODUCTION,
+    business_context: Optional[Dict[str, Any]] = None
+) -> PackageRiskProfile
+```
+
+**Assess overall risk profile for a package with multiple vulnerabilities.**
+
+**Example:**
+```python
+risk_assessor = AIRiskAssessor()
+risk_profile = await risk_assessor.assess_package_risk_profile(
+    vulnerabilities=vulnerabilities,
+    package_name="requests",
+    context=ThreatContext.PRODUCTION
+)
+
+print(f"Overall Package Risk: {risk_profile.overall_package_risk}")
+print(f"Critical Vulnerabilities: {risk_profile.critical_vulnerabilities}")
+print(f"Immediate Actions: {risk_profile.immediate_actions}")
+
+# Get top priority vulnerabilities
+top_priority = risk_profile.get_top_priority_vulnerabilities(limit=5)
+for vuln_assessment in top_priority:
+    print(f"- {vuln_assessment.vulnerability.title}")
+    print(f"  Risk Score: {vuln_assessment.overall_risk_score}")
+    print(f"  Urgency: {vuln_assessment.urgency_level}")
+```
+
+### **CVEAnalyzer**
+
+AI-powered CVE analysis agent for intelligent vulnerability assessment.
+
+#### **Constructor**
+```python
+from src.ai_layer.agents import CVEAnalyzer
+
+analyzer = CVEAnalyzer(ai_factory=None)
+```
+
+#### **Methods**
+
+##### **analyze_cve()**
+```python
+async def analyze_cve(
+    self,
+    cve_id: str,
+    cve_description: str,
+    package_name: str,
+    current_version: Optional[str] = None,
+    **kwargs
+) -> CVEAnalysisResult
+```
+
+**Analyze a CVE for package-specific impact.**
+
+**Example:**
+```python
+analyzer = CVEAnalyzer()
+analysis = await analyzer.analyze_cve(
+    cve_id="CVE-2023-12345",
+    cve_description="SQL injection vulnerability in requests library",
+    package_name="requests",
+    current_version="2.28.0"
+)
+
+print(f"Is Affected: {analysis.is_affected}")
+print(f"Confidence: {analysis.confidence}")
+print(f"Recommendation: {analysis.recommendation}")
+```
+
+## 📊 **Enhanced Data Models** ⭐ *New*
+
+### **CrossDatabaseAnalysis**
+
+Comprehensive analysis result across multiple vulnerability databases.
+
+#### **Attributes**
+```python
+@dataclass
+class CrossDatabaseAnalysis:
+    package_name: str
+    correlations: List[VulnerabilityCorrelation]
+    unique_vulnerabilities: List[VulnerabilityInfo]
+    ai_overall_risk_assessment: str
+    ai_priority_vulnerabilities: List[str]
+    ai_threat_landscape_summary: str
+    database_coverage: Dict[str, float]
+    consensus_confidence: float
+```
+
+### **PackageRiskProfile**
+
+Overall risk profile for a package based on all vulnerabilities.
+
+#### **Attributes**
+```python
+@dataclass
+class PackageRiskProfile:
+    package_name: str
+    overall_package_risk: float
+    critical_vulnerabilities: int
+    high_risk_vulnerabilities: int
+    immediate_actions: List[str]
+    ai_package_assessment: str
+    ai_strategic_recommendations: str
+```
+
+#### **Methods**
+
+##### **get_top_priority_vulnerabilities()**
+```python
+def get_top_priority_vulnerabilities(self, limit: int = 5) -> List[ComprehensiveRiskAssessment]
+```
+
+**Get top priority vulnerabilities for immediate attention.**
+
+### **ThreatContext Enum**
+
+Threat context for risk assessment.
+
+```python
+class ThreatContext(Enum):
+    PRODUCTION = "production"
+    DEVELOPMENT = "development"
+    TESTING = "testing"
+    INTERNAL = "internal"
+    PUBLIC_FACING = "public_facing"
+    CRITICAL_INFRASTRUCTURE = "critical_infrastructure"
+```
+
+## 🎯 **Sandbox-Specific APIs**
+
+### **SNYK Sandbox**
+- Commercial vulnerability intelligence
+- AI risk assessment and exploit maturity analysis
+- License and dependency analysis
+
+### **MITRE Sandbox**
+- Authoritative CVE database access
+- AI relevance filtering and search enhancement
+- Cross-database correlation
+
+### **GitHub Advisory Sandbox**
+- Security advisories with AI priority scoring
+- Version-specific vulnerability assessment
+- Integration with CVE database
+
+### **Exploit-DB Sandbox**
+- Exploit intelligence and threat analysis
+- IoC (Indicators of Compromise) extraction
+- MITRE ATT&CK technique mapping
+
+**This comprehensive API enables enterprise-grade vulnerability intelligence with AI-powered analysis, correlation, and risk assessment capabilities.**
 
 **Example:**
 ```python

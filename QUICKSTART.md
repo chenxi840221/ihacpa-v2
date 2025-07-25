@@ -28,7 +28,7 @@ python simple_azure_test.py
 
 ## 🎯 **First Scan in 30 Seconds**
 
-### **Quick Package Scan**
+### **Basic Package Scan**
 ```python
 import asyncio
 from src.core.sandbox_manager import SandboxManager
@@ -60,6 +60,76 @@ asyncio.run(quick_scan())
 pypi: ✅ 🤖 0 vulnerabilities
 nvd: ✅ 🤖 2 vulnerabilities  
 snyk: ✅ 🤖 1 vulnerabilities
+mitre: ✅ 🤖 3 vulnerabilities
+github_advisory: ✅ 🤖 2 vulnerabilities
+exploit_db: ✅ 🤖 1 exploits
+```
+
+### **🤖 AI-Enhanced Comprehensive Scan** ⭐ *New*
+```python
+import asyncio
+from src.core.sandbox_manager import SandboxManager
+
+async def ai_enhanced_scan():
+    # Initialize with full AI capabilities
+    manager = SandboxManager({
+        "ai": {
+            "enabled": True,
+            "provider": "azure",
+            "model": "gpt-4.1"
+        }
+    })
+    await manager.initialize()
+    
+    # AI-enhanced comprehensive scan
+    results = await manager.scan_package_with_ai_analysis(
+        package_name="requests",
+        current_version="2.30.0",
+        include_correlation_analysis=True,
+        include_risk_assessment=True
+    )
+    
+    # Get AI-powered summary
+    summary = await manager.get_enhanced_scan_summary(results)
+    
+    print(f"📦 Package: {summary['package_name']}")
+    print(f"🎯 Sources Scanned: {summary['total_sources_scanned']}")
+    print(f"🔍 Unique Vulnerabilities: {summary['unique_vulnerabilities']}")
+    print(f"⚠️  Overall Risk: {summary['risk_insights']['overall_package_risk']}")
+    print(f"🚨 Critical Issues: {summary['risk_insights']['critical_vulnerabilities']}")
+    print(f"⚡ Immediate Actions: {summary['risk_insights']['immediate_actions_needed']}")
+    
+    # Show top priority vulnerabilities
+    top_vulns = summary['risk_insights']['top_priority_vulnerabilities']
+    if top_vulns:
+        print(f"\n🎯 Top Priority Vulnerabilities:")
+        for vuln in top_vulns:
+            print(f"   • {vuln['title']}")
+            print(f"     Risk Score: {vuln['risk_score']:.2f}")
+            print(f"     Urgency: {vuln['urgency']}")
+    
+    await manager.cleanup()
+
+# Run enhanced scan
+asyncio.run(ai_enhanced_scan())
+```
+
+**Expected Enhanced Output:**
+```
+📦 Package: requests
+🎯 Sources Scanned: 6
+🔍 Unique Vulnerabilities: 5
+⚠️  Overall Risk: 0.72
+🚨 Critical Issues: 1
+⚡ Immediate Actions: 3
+
+🎯 Top Priority Vulnerabilities:
+   • CVE-2023-32681: Proxy-Authorization header leak
+     Risk Score: 0.85
+     Urgency: urgent
+   • GHSA-j8r2-6x86-q33q: Certificate verification bypass
+     Risk Score: 0.78
+     Urgency: moderate
 ```
 
 ## 📊 **System Health Check**
@@ -82,9 +152,10 @@ cat production_metrics.json
 ==============================
 ✅ Azure OpenAI: Connected
 ✅ Core modules: Available
-✅ Sandboxes: Available
-✅ AI Layer: Available
+✅ Sandboxes: 6 available (PyPI, NVD, SNYK, MITRE, GitHub Advisory, Exploit-DB)
+✅ AI Layer: Available with correlation & risk assessment
 ✅ Configuration: Available
+🤖 AI Enhancement: 100% coverage
 ```
 
 ## 🚨 **Quick Troubleshooting**

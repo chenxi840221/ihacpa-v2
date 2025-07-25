@@ -209,6 +209,276 @@ async def scan_with_progress():
 
 ## 🤖 **AI-Enhanced Analysis**
 
+### **New AI-Powered Scanning Methods** ⭐
+
+#### **AI-Enhanced Comprehensive Scanning**
+```python
+import asyncio
+from src.core.sandbox_manager import SandboxManager
+
+async def ai_comprehensive_scan():
+    """Perform AI-enhanced scanning with correlation and risk assessment"""
+    # Initialize with AI capabilities
+    manager = SandboxManager({
+        "ai": {
+            "enabled": True,
+            "provider": "azure",
+            "model": "gpt-4.1"
+        }
+    })
+    await manager.initialize()
+    
+    # AI-enhanced comprehensive scan
+    results = await manager.scan_package_with_ai_analysis(
+        package_name="requests",
+        current_version="2.30.0",
+        include_correlation_analysis=True,
+        include_risk_assessment=True
+    )
+    
+    print(f"📦 Enhanced Analysis for {results['package_name']}:")
+    print(f"   Sources Scanned: {len(results['scan_results'])}")
+    print(f"   Scan Timestamp: {results['scan_timestamp']}")
+    
+    # Display correlation analysis if available
+    if results.get('correlation_analysis'):
+        corr = results['correlation_analysis']
+        print(f"\n🔗 Cross-Database Correlation:")
+        print(f"   Unique Vulnerabilities: {len(corr.unique_vulnerabilities)}")
+        print(f"   Correlations Found: {len(corr.correlations)}")
+        print(f"   AI Overall Risk: {corr.ai_overall_risk_assessment[:100]}...")
+        print(f"   Consensus Confidence: {corr.consensus_confidence:.1%}")
+    
+    # Display risk assessment if available
+    if results.get('risk_assessment'):
+        risk = results['risk_assessment']
+        print(f"\n⚠️  AI Risk Assessment:")
+        print(f"   Overall Package Risk: {risk.overall_package_risk:.2f}")
+        print(f"   Critical Vulnerabilities: {risk.critical_vulnerabilities}")
+        print(f"   High Risk Vulnerabilities: {risk.high_risk_vulnerabilities}")
+        print(f"   Immediate Actions Required: {len(risk.immediate_actions)}")
+        
+        # Show top priority vulnerabilities
+        top_priority = risk.get_top_priority_vulnerabilities(3)
+        if top_priority:
+            print(f"\n🎯 Top Priority Issues:")
+            for i, vuln_assessment in enumerate(top_priority, 1):
+                vuln = vuln_assessment.vulnerability
+                print(f"   {i}. {vuln.cve_id or vuln.title}")
+                print(f"      Risk Score: {vuln_assessment.overall_risk_score:.2f}")
+                print(f"      Urgency: {vuln_assessment.urgency_level}")
+                print(f"      Recommendation: {vuln_assessment.ai_recommendation[:80]}...")
+    
+    await manager.cleanup()
+
+# Run the enhanced scan
+asyncio.run(ai_comprehensive_scan())
+```
+
+#### **Enhanced Scan Summary**
+```python
+async def get_scan_insights():
+    """Get AI-powered insights and summary from scan results"""
+    manager = SandboxManager({
+        "ai": {"enabled": True, "provider": "azure"}
+    })
+    await manager.initialize()
+    
+    # Perform enhanced scan
+    results = await manager.scan_package_with_ai_analysis(
+        package_name="django",
+        current_version="4.2.0",
+        include_correlation_analysis=True,
+        include_risk_assessment=True
+    )
+    
+    # Get AI-powered summary
+    summary = await manager.get_enhanced_scan_summary(results)
+    
+    print(f"📊 AI-Enhanced Summary for {summary['package_name']}:")
+    print(f"   🎯 Sources Scanned: {summary['total_sources_scanned']}")
+    print(f"   ✅ Successful Scans: {summary['successful_scans']}")
+    print(f"   🤖 AI-Enhanced Sources: {summary['ai_enhanced_sources']}")
+    print(f"   🔍 Total Vulnerabilities: {summary['total_vulnerabilities_found']}")
+    print(f"   🎯 Unique Vulnerabilities: {summary['unique_vulnerabilities']}")
+    
+    # Risk insights
+    if 'risk_insights' in summary:
+        risk = summary['risk_insights']
+        print(f"\n⚠️  Risk Analysis:")
+        print(f"   Overall Risk: {risk['overall_package_risk']:.2f}")
+        print(f"   Critical Issues: {risk['critical_vulnerabilities']}")
+        print(f"   High Risk Issues: {risk['high_risk_vulnerabilities']}")
+        print(f"   Immediate Actions: {risk['immediate_actions_needed']}")
+        
+        # Top priority vulnerabilities
+        if risk.get('top_priority_vulnerabilities'):
+            print(f"\n🚨 High Priority Vulnerabilities:")
+            for vuln in risk['top_priority_vulnerabilities']:
+                print(f"   • {vuln['title']} (Risk: {vuln['risk_score']:.2f}, {vuln['urgency']})")
+    
+    await manager.cleanup()
+
+asyncio.run(get_scan_insights())
+```
+
+### **Cross-Database Correlation Analysis** ⭐
+
+#### **Advanced Vulnerability Correlation**
+```python
+from src.ai_layer.agents import CrossDatabaseCorrelationAnalyzer
+
+async def perform_correlation_analysis():
+    """Analyze vulnerabilities across multiple databases with AI correlation"""
+    manager = SandboxManager({"ai": {"enabled": True, "provider": "azure"}})
+    await manager.initialize()
+    
+    # Get scan results from multiple sources
+    scan_results = await manager.scan_package("pillow", "9.5.0")
+    
+    # Initialize correlation analyzer
+    analyzer = CrossDatabaseCorrelationAnalyzer(manager.ai_layer)
+    
+    # Perform cross-database analysis
+    correlation_analysis = await analyzer.analyze_cross_database_results(
+        package_name="pillow",
+        scan_results=scan_results
+    )
+    
+    print(f"🔗 Cross-Database Correlation Analysis for Pillow:")
+    print(f"   📊 Total Scan Results: {len(scan_results)}")
+    print(f"   🎯 Unique Vulnerabilities: {len(correlation_analysis.unique_vulnerabilities)}")
+    print(f"   🔍 Correlations Found: {len(correlation_analysis.correlations)}")
+    print(f"   🤖 AI Confidence: {correlation_analysis.consensus_confidence:.1%}")
+    
+    print(f"\n📋 AI Overall Assessment:")
+    print(f"   {correlation_analysis.ai_overall_risk_assessment}")
+    
+    print(f"\n🚨 AI Priority Vulnerabilities:")
+    for priority_vuln in correlation_analysis.ai_priority_vulnerabilities[:3]:
+        print(f"   • {priority_vuln}")
+    
+    print(f"\n🌐 Threat Landscape Summary:")
+    print(f"   {correlation_analysis.ai_threat_landscape_summary}")
+    
+    # Database coverage analysis
+    print(f"\n📊 Database Coverage:")
+    for db, coverage in correlation_analysis.database_coverage.items():
+        coverage_icon = "🟢" if coverage > 0.8 else "🟡" if coverage > 0.5 else "🔴"
+        print(f"   {coverage_icon} {db}: {coverage:.1%} coverage")
+    
+    await manager.cleanup()
+
+asyncio.run(perform_correlation_analysis())
+```
+
+### **AI Risk Assessment Engine** ⭐
+
+#### **Comprehensive Risk Analysis**
+```python
+from src.ai_layer.agents import AIRiskAssessor, ThreatContext
+
+async def comprehensive_risk_assessment():
+    """Perform AI-powered risk assessment with business context"""
+    manager = SandboxManager({"ai": {"enabled": True, "provider": "azure"}})
+    await manager.initialize()
+    
+    # Get vulnerabilities for analysis
+    scan_results = await manager.scan_package("urllib3", "1.26.16")
+    
+    # Collect all vulnerabilities
+    all_vulnerabilities = []
+    for result in scan_results.values():
+        if result.success:
+            all_vulnerabilities.extend(result.vulnerabilities)
+    
+    if not all_vulnerabilities:
+        print("No vulnerabilities found for analysis")
+        return
+    
+    # Initialize risk assessor
+    risk_assessor = AIRiskAssessor(manager.ai_layer)
+    
+    # Define business context
+    business_context = {
+        "industry": "financial_services",
+        "asset_criticality": "high",
+        "data_sensitivity": "confidential",
+        "regulatory_requirements": ["PCI-DSS", "SOX", "GDPR"]
+    }
+    
+    # Assess individual vulnerability risk
+    print(f"🔍 Individual Vulnerability Risk Assessment:")
+    individual_assessments = []
+    
+    for i, vuln in enumerate(all_vulnerabilities[:3], 1):  # Analyze top 3
+        assessment = await risk_assessor.assess_vulnerability_risk(
+            vulnerability=vuln,
+            package_name="urllib3",
+            context=ThreatContext.PRODUCTION,
+            business_context=business_context
+        )
+        individual_assessments.append(assessment)
+        
+        print(f"\n   {i}. {vuln.cve_id or vuln.title}")
+        print(f"      Overall Risk Score: {assessment.overall_risk_score:.2f}")
+        print(f"      AI Severity: {assessment.ai_severity_assessment.value}")
+        print(f"      Business Impact: {assessment.business_impact_score:.2f}")
+        print(f"      Exploit Available: {'Yes' if assessment.exploit_availability else 'No'}")
+        print(f"      Urgency Level: {assessment.urgency_level}")
+        print(f"      Time to Exploit: {assessment.time_to_exploit}")
+        print(f"      Mitigation Complexity: {assessment.mitigation_complexity}")
+        print(f"      AI Confidence: {assessment.ai_confidence:.1%}")
+        print(f"      Recommendation: {assessment.ai_recommendation[:100]}...")
+    
+    # Assess overall package risk profile
+    print(f"\n📊 Package Risk Profile Assessment:")
+    package_profile = await risk_assessor.assess_package_risk_profile(
+        vulnerabilities=all_vulnerabilities,
+        package_name="urllib3",
+        context=ThreatContext.PRODUCTION,
+        business_context=business_context
+    )
+    
+    print(f"   📦 Package: {package_profile.package_name}")
+    print(f"   ⚠️  Overall Risk: {package_profile.overall_package_risk:.2f}")
+    print(f"   🎯 Highest Individual Risk: {package_profile.highest_individual_risk:.2f}")
+    print(f"   📈 Average Risk Score: {package_profile.average_risk_score:.2f}")
+    
+    print(f"\n📊 Risk Distribution:")
+    print(f"   🚨 Critical: {package_profile.critical_vulnerabilities}")
+    print(f"   🔴 High: {package_profile.high_risk_vulnerabilities}")
+    print(f"   🟡 Medium: {package_profile.medium_risk_vulnerabilities}")
+    print(f"   🟢 Low: {package_profile.low_risk_vulnerabilities}")
+    
+    print(f"\n💼 Business Impact Analysis:")
+    print(f"   Business Impact: {package_profile.aggregate_business_impact:.2f}")
+    print(f"   Compliance Risk: {package_profile.aggregate_compliance_risk:.2f}")
+    print(f"   Reputational Risk: {package_profile.aggregate_reputational_risk:.2f}")
+    
+    print(f"\n🎯 Action Plan:")
+    print(f"   Immediate Actions ({len(package_profile.immediate_actions)}):")
+    for action in package_profile.immediate_actions:
+        print(f"     • {action}")
+    
+    print(f"   Short-term Actions ({len(package_profile.short_term_actions)}):")
+    for action in package_profile.short_term_actions[:3]:
+        print(f"     • {action}")
+    
+    print(f"\n🤖 AI Strategic Assessment:")
+    print(f"   {package_profile.ai_package_assessment}")
+    
+    print(f"\n📈 Risk Trends:")
+    print(f"   {package_profile.ai_risk_trends}")
+    
+    print(f"\n💡 Strategic Recommendations:")
+    print(f"   {package_profile.ai_strategic_recommendations}")
+    
+    await manager.cleanup()
+
+asyncio.run(comprehensive_risk_assessment())
+```
+
 ### **Understanding AI Results**
 
 #### **Confidence Scoring**
@@ -396,6 +666,49 @@ async def prioritize_vulnerabilities():
 
 ## ⚙️ **Configuration & Customization**
 
+### **AI-Enhanced Configuration** ⭐
+
+#### **Advanced AI Configuration**
+```python
+# AI-enhanced configuration with correlation and risk assessment
+ai_enhanced_config = {
+    "ai": {
+        "enabled": True,
+        "provider": "azure",
+        "model": "gpt-4.1",
+        "temperature": 0.1,
+        "timeout": 45,
+        "max_retries": 3
+    },
+    "correlation_analysis": {
+        "enabled": True,
+        "confidence_threshold": 0.7,
+        "max_correlations_per_vulnerability": 5,
+        "dedupe_similarity_threshold": 0.8
+    },
+    "risk_assessment": {
+        "enabled": True,
+        "business_context": {
+            "industry": "technology",
+            "asset_criticality": "high",
+            "data_sensitivity": "confidential",
+            "regulatory_requirements": ["SOC2", "ISO27001"]
+        },
+        "threat_context": "production",
+        "risk_tolerance": "low"  # low, medium, high
+    },
+    "performance": {
+        "max_concurrent_scans": 5,
+        "ai_analysis_batch_size": 3,
+        "correlation_cache_ttl": 7200,  # 2 hours
+        "risk_assessment_cache_ttl": 3600  # 1 hour
+    }
+}
+
+# Use enhanced configuration
+manager = SandboxManager(ai_enhanced_config)
+```
+
 ### **System Configuration**
 
 #### **Environment Variables**
@@ -405,6 +718,12 @@ export AZURE_OPENAI_ENDPOINT="https://automation-seanchen.openai.azure.com/"
 export AZURE_OPENAI_KEY="your-api-key"
 export AZURE_OPENAI_MODEL="gpt-4.1"
 export AZURE_OPENAI_API_VERSION="2025-01-01-preview"
+
+# AI Enhancement Settings
+export AI_CORRELATION_ENABLED="true"
+export AI_RISK_ASSESSMENT_ENABLED="true"
+export AI_CONFIDENCE_THRESHOLD="0.7"
+export AI_BATCH_SIZE="3"
 
 # Performance Tuning
 export MAX_CONCURRENT_SCANS="5"
@@ -417,12 +736,16 @@ export REDIS_URL="redis://localhost:6379"
 export REDIS_TTL="3600"
 export REDIS_ENABLED="true"
 
+# AI Caching
+export AI_CORRELATION_CACHE_TTL="7200"
+export AI_RISK_CACHE_TTL="3600"
+
 # Debugging
 export LOG_LEVEL="INFO"
 export DEBUG_MODE="false"
 ```
 
-#### **Configuration Files**
+#### **Enhanced Configuration Files**
 ```yaml
 # config/global/settings.yaml
 performance:
@@ -431,6 +754,7 @@ performance:
   batch_size: 10
   rate_limit_requests: 10
   rate_limit_period: 60
+  ai_analysis_batch_size: 3
 
 ai:
   enabled: true
@@ -440,11 +764,52 @@ ai:
   timeout: 45
   max_retries: 3
 
+# New AI Enhancement Features
+correlation_analysis:
+  enabled: true
+  confidence_threshold: 0.7
+  max_correlations_per_vulnerability: 5
+  dedupe_similarity_threshold: 0.8
+  cache_ttl: 7200  # 2 hours
+
+risk_assessment:
+  enabled: true
+  business_context:
+    industry: "technology"
+    asset_criticality: "high"
+    data_sensitivity: "confidential"
+    regulatory_requirements:
+      - "SOC2"
+      - "ISO27001"
+      - "GDPR"
+  threat_context: "production"  # production, development, testing, etc.
+  risk_tolerance: "low"  # low, medium, high
+  cache_ttl: 3600  # 1 hour
+
+# Sandbox-specific AI configurations
+sandboxes:
+  snyk:
+    ai_risk_assessment: true
+    ai_exploit_maturity_analysis: true
+  mitre:
+    ai_relevance_filtering: true
+    ai_search_enhancement: true
+  github_advisory:
+    ai_priority_scoring: true
+    ai_version_assessment: true
+  exploit_db:
+    ai_threat_analysis: true
+    ai_ioc_extraction: true
+
 redis:
   enabled: true
   url: "redis://localhost:6379"
   ttl: 3600
   max_connections: 10
+  # AI-specific cache settings
+  ai_cache_prefix: "ihacpa:ai:"
+  correlation_cache_ttl: 7200
+  risk_assessment_cache_ttl: 3600
 
 logging:
   level: "INFO"
@@ -452,12 +817,16 @@ logging:
   file_rotation: true
   max_file_size: "10MB"
   backup_count: 5
+  # AI-specific logging
+  ai_analysis_log: true
+  correlation_analysis_log: true
+  risk_assessment_log: true
 ```
 
-### **Custom Configuration**
+### **Custom AI-Enhanced Configuration**
 ```python
-async def custom_configuration():
-    # Create custom configuration
+async def custom_ai_configuration():
+    # Create comprehensive AI-enhanced configuration
     custom_config = {
         "ai": {
             "enabled": True,
@@ -465,12 +834,32 @@ async def custom_configuration():
             "temperature": 0.2,  # More creative responses
             "timeout": 60        # Longer timeout
         },
+        "correlation_analysis": {
+            "enabled": True,
+            "confidence_threshold": 0.8,  # Higher confidence required
+            "max_correlations_per_vulnerability": 3,  # Limit correlations
+            "dedupe_similarity_threshold": 0.9  # Stricter deduplication
+        },
+        "risk_assessment": {
+            "enabled": True,
+            "business_context": {
+                "industry": "healthcare",
+                "asset_criticality": "critical",
+                "data_sensitivity": "pii_phi",
+                "regulatory_requirements": ["HIPAA", "SOC2", "GDPR"]
+            },
+            "threat_context": "critical_infrastructure",
+            "risk_tolerance": "very_low"
+        },
         "performance": {
-            "max_concurrent_scans": 2,  # Conservative
-            "request_timeout": 30
+            "max_concurrent_scans": 2,  # Conservative for critical systems
+            "request_timeout": 30,
+            "ai_analysis_batch_size": 1  # Process one at a time
         },
         "redis": {
-            "enabled": False  # Disable caching
+            "enabled": True,
+            "correlation_cache_ttl": 14400,  # 4 hours
+            "risk_assessment_cache_ttl": 7200  # 2 hours
         }
     }
     
@@ -478,10 +867,84 @@ async def custom_configuration():
     manager = SandboxManager(custom_config)
     await manager.initialize()
     
-    # Your scanning logic here
-    results = await manager.scan_package("requests")
+    # Perform AI-enhanced scanning
+    results = await manager.scan_package_with_ai_analysis(
+        package_name="cryptography",
+        current_version="41.0.0",
+        include_correlation_analysis=True,
+        include_risk_assessment=True
+    )
+    
+    # Get enhanced summary with AI insights
+    summary = await manager.get_enhanced_scan_summary(results)
+    
+    print(f"Healthcare-Specific Risk Analysis:")
+    print(f"Overall Risk: {summary.get('risk_insights', {}).get('overall_package_risk', 'N/A')}")
+    print(f"Critical Issues: {summary.get('risk_insights', {}).get('critical_vulnerabilities', 0)}")
     
     await manager.cleanup()
+
+asyncio.run(custom_ai_configuration())
+```
+
+### **Industry-Specific Configurations**
+
+#### **Financial Services Configuration**
+```python
+financial_config = {
+    "risk_assessment": {
+        "business_context": {
+            "industry": "financial_services",
+            "asset_criticality": "critical",
+            "data_sensitivity": "financial_data",
+            "regulatory_requirements": ["PCI-DSS", "SOX", "GDPR", "CCPA"]
+        },
+        "threat_context": "public_facing",
+        "risk_tolerance": "very_low"
+    },
+    "correlation_analysis": {
+        "confidence_threshold": 0.9,  # Very high confidence
+        "focus_areas": ["authentication", "encryption", "data_exposure"]
+    }
+}
+```
+
+#### **Healthcare Configuration**
+```python
+healthcare_config = {
+    "risk_assessment": {
+        "business_context": {
+            "industry": "healthcare",
+            "asset_criticality": "critical",
+            "data_sensitivity": "pii_phi",
+            "regulatory_requirements": ["HIPAA", "HITECH", "GDPR"]
+        },
+        "threat_context": "critical_infrastructure",
+        "risk_tolerance": "minimal"
+    },
+    "correlation_analysis": {
+        "focus_areas": ["data_privacy", "access_control", "audit_logging"]
+    }
+}
+```
+
+#### **E-commerce Configuration**
+```python
+ecommerce_config = {
+    "risk_assessment": {
+        "business_context": {
+            "industry": "retail_ecommerce",
+            "asset_criticality": "high",
+            "data_sensitivity": "customer_data",
+            "regulatory_requirements": ["PCI-DSS", "GDPR", "CCPA"]
+        },
+        "threat_context": "public_facing",
+        "risk_tolerance": "low"
+    },
+    "correlation_analysis": {
+        "focus_areas": ["payment_processing", "session_management", "injection_attacks"]
+    }
+}
 ```
 
 ## 📈 **Monitoring & Performance**

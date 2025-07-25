@@ -336,6 +336,327 @@ result = await analyzer.analyze_cve(
 print(f"AI Analysis: {result}")
 ```
 
+### **7. AI-Enhanced Scanning Issues** ⭐
+
+#### **Symptoms:**
+- `scan_package_with_ai_analysis()` fails
+- Missing correlation analysis results
+- Risk assessment not working
+- Empty AI insights
+
+#### **Solutions:**
+
+**Test Enhanced Scanning Methods:**
+```python
+# Test the new AI-enhanced scanning
+from src.core.sandbox_manager import SandboxManager
+
+async def test_ai_enhanced():
+    manager = SandboxManager({
+        "ai": {"enabled": True, "provider": "azure"}
+    })
+    await manager.initialize()
+    
+    try:
+        # Test basic AI-enhanced scan
+        results = await manager.scan_package_with_ai_analysis(
+            package_name="requests",
+            include_correlation_analysis=False,  # Start simple
+            include_risk_assessment=False
+        )
+        print("✅ Basic AI-enhanced scan working")
+        
+        # Test with correlation analysis
+        results = await manager.scan_package_with_ai_analysis(
+            package_name="requests", 
+            include_correlation_analysis=True,
+            include_risk_assessment=False
+        )
+        
+        if results.get('correlation_analysis'):
+            print("✅ Correlation analysis working")
+        else:
+            print("❌ Correlation analysis failed")
+        
+        # Test with risk assessment
+        results = await manager.scan_package_with_ai_analysis(
+            package_name="requests",
+            include_correlation_analysis=False,
+            include_risk_assessment=True
+        )
+        
+        if results.get('risk_assessment'):
+            print("✅ Risk assessment working")
+        else:
+            print("❌ Risk assessment failed")
+    
+    except Exception as e:
+        print(f"❌ AI-enhanced scanning failed: {e}")
+        import traceback
+        traceback.print_exc()
+    
+    await manager.cleanup()
+
+asyncio.run(test_ai_enhanced())
+```
+
+**Test AI Agents Individually:**
+```python
+# Test Cross-Database Correlation Analyzer
+from src.ai_layer.agents import CrossDatabaseCorrelationAnalyzer
+
+async def test_correlation():
+    try:
+        manager = SandboxManager({"ai": {"enabled": True, "provider": "azure"}})
+        await manager.initialize()
+        
+        # Get basic scan results first
+        scan_results = await manager.scan_package("requests")
+        
+        # Test correlation analyzer
+        analyzer = CrossDatabaseCorrelationAnalyzer(manager.ai_layer)
+        correlation = await analyzer.analyze_cross_database_results(
+            "requests", scan_results
+        )
+        
+        print(f"✅ Correlation analyzer working: {len(correlation.unique_vulnerabilities)} unique vulns")
+        
+    except Exception as e:
+        print(f"❌ Correlation analyzer failed: {e}")
+        # Check if AI layer is properly initialized
+        if not manager.ai_layer:
+            print("💡 AI layer not initialized - check Azure OpenAI connection")
+
+asyncio.run(test_correlation())
+```
+
+```python
+# Test AI Risk Assessor
+from src.ai_layer.agents import AIRiskAssessor, ThreatContext
+
+async def test_risk_assessment():
+    try:
+        manager = SandboxManager({"ai": {"enabled": True, "provider": "azure"}})
+        await manager.initialize()
+        
+        # Create a test vulnerability
+        from src.core.base_scanner import VulnerabilityInfo, SeverityLevel
+        from datetime import datetime
+        
+        test_vuln = VulnerabilityInfo(
+            title="Test SQL Injection Vulnerability",
+            description="A SQL injection vulnerability that allows remote code execution",
+            severity=SeverityLevel.HIGH,
+            cve_id="CVE-2023-TEST",
+            cvss_score=8.5,
+            published_date=datetime.now(),
+            affected_versions=["1.0.0", "1.1.0"],
+            fixed_versions=["1.2.0"],
+            references=["https://example.com/vuln"]
+        )
+        
+        # Test risk assessor
+        assessor = AIRiskAssessor(manager.ai_layer)
+        assessment = await assessor.assess_vulnerability_risk(
+            vulnerability=test_vuln,
+            package_name="test-package",
+            context=ThreatContext.PRODUCTION
+        )
+        
+        print(f"✅ Risk assessor working: Risk score {assessment.overall_risk_score:.2f}")
+        print(f"   Urgency: {assessment.urgency_level}")
+        print(f"   AI Confidence: {assessment.ai_confidence:.1%}")
+        
+    except Exception as e:
+        print(f"❌ Risk assessor failed: {e}")
+        # Check specific error types
+        if "rate" in str(e).lower():
+            print("💡 Possible Azure OpenAI rate limiting")
+        elif "timeout" in str(e).lower():
+            print("💡 Increase timeout: export REQUEST_TIMEOUT=90")
+
+asyncio.run(test_risk_assessment())
+```
+
+**Check AI Agent Dependencies:**
+```python
+# Verify all AI components are available
+async def check_ai_dependencies():
+    print("🔍 Checking AI Dependencies:")
+    
+    # Check AI factory
+    try:
+        from src.ai_layer.chain_factory import get_ai_factory
+        factory = get_ai_factory()
+        print("✅ AI Factory: Available")
+    except Exception as e:
+        print(f"❌ AI Factory: {e}")
+    
+    # Check individual agents
+    agents = [
+        "src.ai_layer.agents.cve_analyzer.CVEAnalyzer",
+        "src.ai_layer.agents.correlation_analyzer.CrossDatabaseCorrelationAnalyzer", 
+        "src.ai_layer.agents.risk_assessor.AIRiskAssessor"
+    ]
+    
+    for agent_path in agents:
+        try:
+            module_path, class_name = agent_path.rsplit('.', 1)
+            module = __import__(module_path, fromlist=[class_name])
+            agent_class = getattr(module, class_name)
+            print(f"✅ {class_name}: Available")
+        except Exception as e:
+            print(f"❌ {class_name}: {e}")
+
+asyncio.run(check_ai_dependencies())
+```
+
+### **8. Correlation Analysis Issues** ⭐
+
+#### **Symptoms:**
+- Empty correlation results
+- "No correlations found" messages
+- Correlation confidence always 0%
+
+#### **Solutions:**
+
+**Check Correlation Thresholds:**
+```python
+# Lower confidence threshold for testing
+config = {
+    "correlation_analysis": {
+        "enabled": True,
+        "confidence_threshold": 0.5,  # Lower threshold
+        "dedupe_similarity_threshold": 0.7  # More permissive
+    }
+}
+```
+
+**Test with Known Vulnerable Package:**
+```python
+# Test with a package known to have vulnerabilities across databases
+async def test_correlation_with_vulnerable_package():
+    manager = SandboxManager({
+        "ai": {"enabled": True, "provider": "azure"},
+        "correlation_analysis": {"enabled": True, "confidence_threshold": 0.5}
+    })
+    await manager.initialize()
+    
+    # Use a package likely to have vulnerabilities
+    test_packages = ["requests", "urllib3", "pillow", "django"]
+    
+    for package in test_packages:
+        print(f"\n🔍 Testing correlation with {package}:")
+        
+        results = await manager.scan_package_with_ai_analysis(
+            package_name=package,
+            include_correlation_analysis=True,
+            include_risk_assessment=False
+        )
+        
+        if results.get('correlation_analysis'):
+            corr = results['correlation_analysis']
+            print(f"   Vulnerabilities found: {len(corr.unique_vulnerabilities)}")
+            print(f"   Correlations: {len(corr.correlations)}")
+            print(f"   Database coverage: {corr.database_coverage}")
+            
+            if len(corr.correlations) > 0:
+                print(f"✅ Correlation working for {package}")
+                break
+        else:
+            print(f"❌ No correlation data for {package}")
+    
+    await manager.cleanup()
+
+asyncio.run(test_correlation_with_vulnerable_package())
+```
+
+### **9. Risk Assessment Issues** ⭐
+
+#### **Symptoms:**
+- Risk scores always 0.5
+- No business context applied
+- Generic risk recommendations
+
+#### **Solutions:**
+
+**Verify Business Context:**
+```python
+# Test with explicit business context
+business_context = {
+    "industry": "financial_services",
+    "asset_criticality": "critical", 
+    "data_sensitivity": "confidential",
+    "regulatory_requirements": ["PCI-DSS", "SOX"]
+}
+
+config = {
+    "ai": {"enabled": True, "provider": "azure"},
+    "risk_assessment": {
+        "enabled": True,
+        "business_context": business_context,
+        "threat_context": "production"
+    }
+}
+```
+
+**Test Risk Assessment Directly:**
+```python
+# Test risk assessment with known high-risk scenario
+from src.ai_layer.agents import AIRiskAssessor, ThreatContext
+from src.core.base_scanner import VulnerabilityInfo, SeverityLevel
+
+async def test_risk_assessment_direct():
+    try:
+        manager = SandboxManager({"ai": {"enabled": True, "provider": "azure"}})
+        await manager.initialize()
+        
+        # Create high-risk vulnerability
+        high_risk_vuln = VulnerabilityInfo(
+            title="Remote Code Execution in Authentication Module",
+            description="Critical RCE vulnerability allowing unauthenticated remote code execution with admin privileges",
+            severity=SeverityLevel.CRITICAL,
+            cve_id="CVE-2023-HIGH-RISK",
+            cvss_score=9.8,
+            affected_versions=["1.0.0"],
+            fixed_versions=["1.0.1"]
+        )
+        
+        assessor = AIRiskAssessor(manager.ai_layer)
+        
+        # Test with financial services context
+        financial_context = {
+            "industry": "financial_services",
+            "asset_criticality": "critical",
+            "data_sensitivity": "financial_data",
+            "regulatory_requirements": ["PCI-DSS", "SOX", "GDPR"]
+        }
+        
+        assessment = await assessor.assess_vulnerability_risk(
+            vulnerability=high_risk_vuln,
+            package_name="auth-service",
+            context=ThreatContext.PRODUCTION,
+            business_context=financial_context
+        )
+        
+        print(f"✅ Risk Assessment Results:")
+        print(f"   Overall Risk: {assessment.overall_risk_score:.2f}")
+        print(f"   Business Impact: {assessment.business_impact_score:.2f}")
+        print(f"   Compliance Risk: {assessment.compliance_risk_score:.2f}")
+        print(f"   Urgency: {assessment.urgency_level}")
+        print(f"   AI Confidence: {assessment.ai_confidence:.1%}")
+        
+        if assessment.overall_risk_score > 0.8:
+            print("✅ Risk assessment properly recognizing high risk")
+        else:
+            print("⚠️  Risk score seems low for critical vulnerability")
+            
+    except Exception as e:
+        print(f"❌ Risk assessment test failed: {e}")
+
+asyncio.run(test_risk_assessment_direct())
+```
+
 ## 🔍 **Diagnostic Scripts**
 
 ### **Complete System Diagnostic**
