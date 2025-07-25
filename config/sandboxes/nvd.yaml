@@ -1,0 +1,49 @@
+# NVD (NIST) Sandbox Configuration
+
+nvd:
+  # API Configuration
+  base_url: "https://services.nvd.nist.gov/rest/json/cves/2.0"
+  api_key: null  # Optional: Set to increase rate limits
+  timeout: 30
+  
+  # Search Parameters
+  max_results: 100
+  days_back: 365  # How far back to search for CVEs
+  
+  # Rate Limiting (NVD is very strict)
+  rate_limit:
+    requests_per_minute: 5     # 5 requests per 30 seconds without API key
+    requests_per_hour: 100     # Conservative limit
+    burst_limit: 2             # Very conservative burst
+  
+  # AI Analysis
+  ai_analysis:
+    enabled: true
+    confidence_threshold: 0.5   # Minimum confidence to include AI results
+    max_cves_to_analyze: 20     # Limit AI analysis for performance
+  
+  # CVE Filtering
+  filtering:
+    min_cvss_score: 0.0        # Minimum CVSS score to include
+    max_age_days: 1095         # Maximum CVE age (3 years)
+    include_disputed: false    # Include disputed CVEs
+    
+    # Relevance scoring
+    keyword_weight: 1.0        # Weight for keyword matches
+    description_weight: 0.8    # Weight for description matches
+    cpe_weight: 1.2           # Weight for CPE matches
+  
+  # Output Configuration
+  include_metadata:
+    cvss_details: true
+    cpe_configurations: true
+    reference_links: true
+    publication_dates: true
+    ai_analysis_details: true
+  
+  # Caching
+  cache:
+    enabled: true
+    ttl_success: 7200          # 2 hours for successful scans
+    ttl_no_results: 1800       # 30 minutes for no results
+    ttl_error: 300             # 5 minutes for errors

@@ -1,0 +1,79 @@
+# Azure OpenAI Configuration for IHACPA v2.0
+# Based on your current azure_settings.yaml
+
+azure_openai:
+  # Provider Configuration
+  provider: "azure"
+  enabled: true
+  
+  # Azure Resource Settings (from environment variables)
+  endpoint: "${AZURE_OPENAI_ENDPOINT}"  # https://automation-seanchen.openai.azure.com/
+  api_key: "${AZURE_OPENAI_KEY}"
+  api_version: "${AZURE_OPENAI_API_VERSION}"  # 2025-01-01-preview
+  
+  # Deployment Configuration
+  deployment_name: "${AZURE_OPENAI_MODEL}"  # gpt-4.1
+  
+  # Model Parameters
+  temperature: 0.1
+  max_tokens: 1000
+  top_p: 1.0
+  frequency_penalty: 0
+  presence_penalty: 0
+  
+  # Performance Settings (optimized for Azure)
+  timeout: 45              # Increased timeout for Azure API
+  max_retries: 2          # Conservative retry count
+  retry_delay: 5.0        # Longer delay between retries
+  
+  # Rate Limiting (Azure specific)
+  rate_limits:
+    requests_per_minute: 60     # Typical Azure limit
+    tokens_per_minute: 150000   # Typical Azure token limit
+    concurrent_requests: 2      # Conservative concurrent limit
+  
+  # AI Analysis Configuration
+  analysis:
+    # CVE Analysis Settings
+    cve_analysis:
+      enabled: true
+      max_cves_per_batch: 5       # Limit batch size for Azure
+      confidence_threshold: 0.5   # Minimum confidence to include results
+      include_reasoning: true     # Include AI reasoning in results
+      
+    # Version Matching Settings  
+    version_matching:
+      enabled: true
+      fuzzy_matching: true        # Enable fuzzy version matching
+      semantic_versioning: true   # Understand semantic versioning
+      
+    # Risk Assessment Settings
+    risk_assessment:
+      enabled: true
+      include_mitigations: true   # Include mitigation suggestions
+      context_aware: true         # Consider package context
+  
+  # Prompt Engineering
+  prompts:
+    system_message: |
+      You are a cybersecurity expert analyzing CVE vulnerabilities. 
+      Be precise, conservative, and provide actionable recommendations.
+      Focus on accuracy over speed.
+    
+    temperature_override:
+      cve_analysis: 0.1          # Very conservative for CVE analysis
+      version_matching: 0.2      # Slightly more flexible for version analysis
+      risk_assessment: 0.15      # Conservative for risk assessment
+  
+  # Error Handling
+  error_handling:
+    fallback_to_mock: true       # Use mock AI if Azure fails
+    log_failures: true          # Log all AI failures
+    graceful_degradation: true   # Continue without AI if needed
+  
+  # Monitoring
+  monitoring:
+    track_usage: true           # Track token usage
+    track_latency: true         # Track response times
+    track_errors: true          # Track error rates
+    log_requests: false         # Don't log requests (privacy)

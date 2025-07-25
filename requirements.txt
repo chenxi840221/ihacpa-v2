@@ -1,0 +1,38 @@
+# Core dependencies for IHACPA v2.0
+# AI/LLM Framework
+langchain>=0.1.0
+langchain-openai>=0.0.8
+langchain-community>=0.0.10
+
+# Browser Automation
+playwright>=1.40.0
+
+# Caching and Data Storage
+redis>=5.0.0
+aioredis>=2.0.0
+
+# Web Framework (for future API)
+fastapi>=0.104.0
+uvicorn>=0.24.0
+
+# Data Models and Validation
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# Async and Rate Limiting
+asyncio-throttle>=1.0.0
+aiofiles>=23.0.0
+
+# Existing Dependencies (maintained for compatibility)
+openpyxl>=3.1.5
+requests>=2.32.4
+aiohttp>=3.8.0
+beautifulsoup4>=4.12.0
+openai>=1.0.0
+pyyaml>=6.0.0
+python-dotenv>=1.0.0
+python-dateutil>=2.8.0
+packaging>=21.0
+
+# Optional Dependencies
+pandas>=2.0.0  # For advanced data analysis

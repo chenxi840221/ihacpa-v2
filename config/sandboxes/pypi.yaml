@@ -1,0 +1,47 @@
+# PyPI Sandbox Configuration
+
+pypi:
+  # API Configuration
+  base_url: "https://pypi.org/pypi"
+  timeout: 30
+  retries: 3
+  
+  # Rate Limiting
+  rate_limit:
+    requests_per_minute: 100
+    requests_per_hour: 2000
+    burst_limit: 20
+  
+  # Analysis Settings
+  analysis:
+    check_for_updates: true
+    flag_missing_license: true
+    flag_old_packages: true
+    old_package_threshold_days: 730  # 2 years
+    
+    # Suspicious pattern detection
+    detect_suspicious_keywords: true
+    suspicious_keywords:
+      - "download"
+      - "install" 
+      - "crack"
+      - "keygen"
+      - "serial"
+      - "license key"
+      - "free download"
+      - "activation"
+  
+  # Caching
+  cache:
+    enabled: true
+    ttl_success: 3600      # 1 hour for successful scans
+    ttl_not_found: 300     # 5 minutes for not found
+    ttl_error: 60          # 1 minute for errors
+  
+  # Output
+  include_metadata:
+    github_url: true
+    author_info: true
+    license_info: true
+    release_history: true
+    dependency_count: true

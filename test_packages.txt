@@ -1,0 +1,15 @@
+requests
+urllib3
+pillow
+django
+numpy
+paramiko
+pyjwt
+tabulate
+cffi
+sqlalchemy
+markdown
+fonttools
+joblib
+terminado
+pure-eval
