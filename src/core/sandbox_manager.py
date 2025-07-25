@@ -96,11 +96,55 @@ class SandboxManager:
                 "days_back": 365
             })
             
-            # TODO: Register other sandboxes as they're implemented
-            # await self.register_sandbox("snyk", SNYKSandbox, snyk_config)
+            # Import and register SNYK sandbox
+            try:
+                from ..sandboxes.snyk import SNYKSandbox
+                await self.register_sandbox("snyk", SNYKSandbox, {
+                    "base_url": "https://security.snyk.io",
+                    "timeout": 45,
+                    "max_retries": 3
+                })
+            except ImportError as e:
+                self.logger.warning(f"SNYK sandbox not available: {e}")
             
-        except ImportError as e:
-            self.logger.warning(f"Could not import sandbox: {e}")
+            # Import and register MITRE sandbox
+            try:
+                from ..sandboxes.mitre import MITRESandbox
+                await self.register_sandbox("mitre", MITRESandbox, {
+                    "base_url": "https://cveawg.mitre.org/api/cve",
+                    "web_base_url": "https://cve.mitre.org",
+                    "timeout": 30,
+                    "max_results": 100,
+                    "days_back": 365
+                })
+            except ImportError as e:
+                self.logger.warning(f"MITRE sandbox not available: {e}")
+            
+            # Import and register GitHub Advisory sandbox
+            try:
+                from ..sandboxes.github_advisory import GitHubAdvisorySandbox
+                await self.register_sandbox("github_advisory", GitHubAdvisorySandbox, {
+                    "api_url": "https://api.github.com/graphql",
+                    "rest_api_url": "https://api.github.com",
+                    "timeout": 30,
+                    "max_results": 100
+                })
+            except ImportError as e:
+                self.logger.warning(f"GitHub Advisory sandbox not available: {e}")
+            
+            # Import and register Exploit-DB sandbox (if implemented)
+            try:
+                from ..sandboxes.exploit_db import ExploitDBSandbox
+                await self.register_sandbox("exploit_db", ExploitDBSandbox, {
+                    "base_url": "https://www.exploit-db.com",
+                    "timeout": 30,
+                    "max_results": 50
+                })
+            except ImportError as e:
+                self.logger.warning(f"Exploit-DB sandbox not available: {e}")
+            
+        except Exception as e:
+            self.logger.error(f"Failed to register sandboxes: {e}")
     
     async def register_sandbox(
         self, 
@@ -301,6 +345,168 @@ class SandboxManager:
                 vulnerabilities=[],
                 error_message=f"Scan error: {str(e)}"
             )
+    
+    async def scan_package_with_ai_analysis(
+        self, 
+        package_name: str, 
+        current_version: Optional[str] = None,
+        include_correlation_analysis: bool = True,
+        include_risk_assessment: bool = True,
+        **kwargs
+    ) -> Dict[str, Any]:
+        """
+        Enhanced package scanning with AI-powered correlation and risk assessment.
+        
+        Args:
+            package_name: Name of the package to scan
+            current_version: Current version of the package
+            include_correlation_analysis: Whether to perform cross-database correlation
+            include_risk_assessment: Whether to perform AI risk assessment
+            **kwargs: Additional parameters
+            
+        Returns:
+            Enhanced scan results with AI analysis
+        """
+        # Perform standard scanning
+        scan_results = await self.scan_package(
+            package_name, current_version, **kwargs
+        )
+        
+        enhanced_results = {
+            "package_name": package_name,
+            "current_version": current_version,
+            "scan_results": scan_results,
+            "scan_timestamp": datetime.utcnow()
+        }
+        
+        # Add cross-database correlation analysis if requested
+        if include_correlation_analysis and self.ai_layer:
+            try:
+                from ..ai_layer.agents.correlation_analyzer import CrossDatabaseCorrelationAnalyzer
+                
+                correlation_analyzer = CrossDatabaseCorrelationAnalyzer(self.ai_layer)
+                correlation_analysis = await correlation_analyzer.analyze_cross_database_results(
+                    package_name, scan_results
+                )
+                enhanced_results["correlation_analysis"] = correlation_analysis
+                
+            except Exception as e:
+                self.logger.warning(f"Correlation analysis failed: {e}")
+                enhanced_results["correlation_analysis"] = None
+        
+        # Add AI risk assessment if requested
+        if include_risk_assessment and self.ai_layer:
+            try:
+                from ..ai_layer.agents.risk_assessor import AIRiskAssessor, ThreatContext
+                
+                risk_assessor = AIRiskAssessor(self.ai_layer)
+                
+                # Collect all unique vulnerabilities
+                all_vulnerabilities = []
+                for result in scan_results.values():
+                    if result.success:
+                        all_vulnerabilities.extend(result.vulnerabilities)
+                
+                # Deduplicate vulnerabilities
+                unique_vulnerabilities = self._deduplicate_vulnerabilities_simple(all_vulnerabilities)
+                
+                # Perform risk assessment
+                if unique_vulnerabilities:
+                    risk_profile = await risk_assessor.assess_package_risk_profile(
+                        unique_vulnerabilities, package_name, ThreatContext.PRODUCTION
+                    )
+                    enhanced_results["risk_assessment"] = risk_profile
+                else:
+                    enhanced_results["risk_assessment"] = None
+                
+            except Exception as e:
+                self.logger.warning(f"Risk assessment failed: {e}")
+                enhanced_results["risk_assessment"] = None
+        
+        return enhanced_results
+    
+    def _deduplicate_vulnerabilities_simple(
+        self, 
+        vulnerabilities: List[VulnerabilityInfo]
+    ) -> List[VulnerabilityInfo]:
+        """Simple vulnerability deduplication"""
+        seen_cves = set()
+        seen_titles = set()
+        unique_vulns = []
+        
+        for vuln in vulnerabilities:
+            # Deduplicate by CVE ID first
+            if vuln.cve_id and vuln.cve_id not in seen_cves:
+                seen_cves.add(vuln.cve_id)
+                unique_vulns.append(vuln)
+            # Then by normalized title for non-CVE vulnerabilities
+            elif not vuln.cve_id:
+                normalized_title = vuln.title.lower().strip()
+                if normalized_title not in seen_titles:
+                    seen_titles.add(normalized_title)
+                    unique_vulns.append(vuln)
+        
+        return unique_vulns
+    
+    async def get_enhanced_scan_summary(
+        self, 
+        scan_results: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Get enhanced summary of scan results with AI insights.
+        
+        Args:
+            scan_results: Results from scan_package_with_ai_analysis
+            
+        Returns:
+            Enhanced summary with key insights
+        """
+        summary = {
+            "package_name": scan_results.get("package_name"),
+            "scan_timestamp": scan_results.get("scan_timestamp"),
+            "total_sources_scanned": len(scan_results.get("scan_results", {})),
+            "successful_scans": 0,
+            "total_vulnerabilities_found": 0,
+            "unique_vulnerabilities": 0,
+            "ai_enhanced_sources": 0
+        }
+        
+        # Analyze basic scan results
+        for source, result in scan_results.get("scan_results", {}).items():
+            if result.success:
+                summary["successful_scans"] += 1
+                summary["total_vulnerabilities_found"] += len(result.vulnerabilities)
+                if result.ai_enhanced:
+                    summary["ai_enhanced_sources"] += 1
+        
+        # Add correlation analysis insights
+        correlation_analysis = scan_results.get("correlation_analysis")
+        if correlation_analysis:
+            summary["correlation_insights"] = correlation_analysis.get_correlation_summary()
+            summary["unique_vulnerabilities"] = len(correlation_analysis.unique_vulnerabilities)
+            summary["ai_overall_risk"] = correlation_analysis.ai_overall_risk_assessment
+            summary["ai_priority_vulnerabilities"] = correlation_analysis.ai_priority_vulnerabilities
+        
+        # Add risk assessment insights
+        risk_assessment = scan_results.get("risk_assessment")
+        if risk_assessment:
+            summary["risk_insights"] = {
+                "overall_package_risk": risk_assessment.overall_package_risk,
+                "critical_vulnerabilities": risk_assessment.critical_vulnerabilities,
+                "high_risk_vulnerabilities": risk_assessment.high_risk_vulnerabilities,
+                "immediate_actions_needed": len(risk_assessment.immediate_actions),
+                "top_priority_vulnerabilities": [
+                    {
+                        "cve_id": vuln.vulnerability.cve_id,
+                        "title": vuln.vulnerability.title,
+                        "risk_score": vuln.overall_risk_score,
+                        "urgency": vuln.urgency_level
+                    }
+                    for vuln in risk_assessment.get_top_priority_vulnerabilities(3)
+                ]
+            }
+        
+        return summary
     
     async def aggregate_results(
         self, 
