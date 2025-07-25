@@ -72,7 +72,7 @@ def examine_excel_file(excel_file):
         traceback.print_exc()
 
 def main():
-    excel_file = "2025-07-09 IHACPA Review of ALL existing PYTHON Packages - org.xlsx"
+    excel_file = "data/2025-07-09 IHACPA Review of ALL existing PYTHON Packages - org.xlsx"
     
     if not Path(excel_file).exists():
         print(f"❌ Excel file not found: {excel_file}")

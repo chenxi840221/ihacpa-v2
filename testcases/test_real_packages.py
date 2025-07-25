@@ -394,7 +394,7 @@ async def test_real_packages(excel_file, limit=10):
 
 async def main():
     """Main test function"""
-    excel_file = "2025-07-09 IHACPA Review of ALL existing PYTHON Packages - org.xlsx"
+    excel_file = "data/2025-07-09 IHACPA Review of ALL existing PYTHON Packages - org.xlsx"
     
     # Check if file exists
     if not Path(excel_file).exists():

@@ -173,6 +173,14 @@ secrets.yaml
 !**/requirements*.json
 !package*.json
 
+# Test results and data
+testcases/data/*.xlsx
+testcases/data/*.csv
+testcases/results/
+testcases/output/
+ihacpa_test_results_*.json
+test_results_*.json
+
 # Backup files
 *.bak
 *.backup

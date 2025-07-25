@@ -275,7 +275,7 @@ async def test_ai_features_demo(excel_file, limit=5):
 
 async def main():
     """Main demo function"""
-    excel_file = "2025-07-09 IHACPA Review of ALL existing PYTHON Packages - org.xlsx"
+    excel_file = "data/2025-07-09 IHACPA Review of ALL existing PYTHON Packages - org.xlsx"
     
     # Check if file exists
     if not Path(excel_file).exists():
