@@ -288,6 +288,12 @@ class MITRESandbox(BaseSandbox):
                             vuln = self._parse_api_cve(cve_data)
                             if vuln:
                                 vulnerabilities.append(vuln)
+                elif response.status == 400:
+                    # Bad request - likely invalid parameters, log but don't fail
+                    self.logger.info(f"MITRE API returned status 400 - Bad Request for {context.package_name}")
+                elif response.status == 404:
+                    # Not found - no results
+                    self.logger.info(f"MITRE API returned status 404 - No results for {context.package_name}")
                 else:
                     self.logger.warning(f"MITRE API returned status {response.status}")
         

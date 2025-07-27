@@ -385,6 +385,280 @@ class PlaywrightManager:
             print(f"⚠️  Screenshot failed: {e}")
             return None
     
+    async def smart_scroll(self, page: Page, direction: str = "down", distance: int = 500) -> bool:
+        """
+        Smart scrolling with human-like behavior.
+        
+        Args:
+            page: Page instance
+            direction: Scroll direction (up, down)
+            distance: Scroll distance in pixels
+            
+        Returns:
+            True if scroll succeeded
+        """
+        try:
+            if self.random_delays:
+                await asyncio.sleep(random.uniform(0.2, 0.8))
+            
+            if direction == "down":
+                await page.evaluate(f"window.scrollBy(0, {distance})")
+            else:
+                await page.evaluate(f"window.scrollBy(0, -{distance})")
+            
+            # Wait for content to load
+            await asyncio.sleep(random.uniform(0.5, 1.0))
+            return True
+            
+        except Exception as e:
+            print(f"⚠️  Smart scroll failed: {e}")
+            return False
+    
+    async def fill_form_field(self, page: Page, selector: str, value: str, clear_first: bool = True) -> bool:
+        """
+        Fill form field with human-like typing.
+        
+        Args:
+            page: Page instance
+            selector: Field selector
+            value: Value to enter
+            clear_first: Whether to clear field first
+            
+        Returns:
+            True if fill succeeded
+        """
+        try:
+            element = await page.wait_for_selector(selector, timeout=5000)
+            if not element:
+                return False
+            
+            # Click to focus
+            await element.click()
+            
+            if clear_first:
+                await element.fill("")
+            
+            # Type with human-like delays
+            for char in value:
+                await element.type(char, delay=random.randint(50, 150))
+                
+            return True
+            
+        except Exception as e:
+            print(f"⚠️  Form fill failed for selector '{selector}': {e}")
+            return False
+    
+    async def wait_for_multiple_selectors(self, page: Page, selectors: List[str], timeout: int = 10000) -> Optional[str]:
+        """
+        Wait for any of multiple selectors to appear.
+        
+        Args:
+            page: Page instance
+            selectors: List of selectors to wait for
+            timeout: Timeout in milliseconds
+            
+        Returns:
+            The selector that was found first, or None
+        """
+        try:
+            tasks = []
+            for selector in selectors:
+                task = asyncio.create_task(page.wait_for_selector(selector, timeout=timeout))
+                tasks.append((selector, task))
+            
+            done, pending = await asyncio.wait(
+                [task for _, task in tasks],
+                return_when=asyncio.FIRST_COMPLETED,
+                timeout=timeout / 1000
+            )
+            
+            # Cancel pending tasks
+            for task in pending:
+                task.cancel()
+            
+            # Find which selector completed
+            for selector, task in tasks:
+                if task in done:
+                    return selector
+            
+        except Exception as e:
+            print(f"⚠️  Multiple selector wait failed: {e}")
+        
+        return None
+    
+    async def extract_table_data(self, page: Page, table_selector: str) -> List[Dict[str, str]]:
+        """
+        Extract data from HTML table.
+        
+        Args:
+            page: Page instance
+            table_selector: Table selector
+            
+        Returns:
+            List of dictionaries representing table rows
+        """
+        try:
+            # Wait for table to load
+            await page.wait_for_selector(table_selector, timeout=10000)
+            
+            # Extract table data using JavaScript
+            table_data = await page.evaluate(f"""
+                () => {{
+                    const table = document.querySelector('{table_selector}');
+                    if (!table) return [];
+                    
+                    const rows = Array.from(table.querySelectorAll('tr'));
+                    if (rows.length === 0) return [];
+                    
+                    // Get headers
+                    const headerRow = rows[0];
+                    const headers = Array.from(headerRow.querySelectorAll('th, td'))
+                        .map(cell => cell.textContent?.trim() || '');
+                    
+                    // Get data rows
+                    const dataRows = rows.slice(1);
+                    const data = [];
+                    
+                    for (const row of dataRows) {{
+                        const cells = Array.from(row.querySelectorAll('td'));
+                        const rowData = {{}};
+                        
+                        cells.forEach((cell, index) => {{
+                            const header = headers[index] || `column_${{index}}`;
+                            rowData[header] = cell.textContent?.trim() || '';
+                        }});
+                        
+                        data.push(rowData);
+                    }}
+                    
+                    return data;
+                }}
+            """)
+            
+            return table_data
+            
+        except Exception as e:
+            print(f"⚠️  Table extraction failed for selector '{table_selector}': {e}")
+            return []
+    
+    async def handle_popup(self, page: Page, action: str = "accept") -> bool:
+        """
+        Handle JavaScript popups (alert, confirm, prompt).
+        
+        Args:
+            page: Page instance
+            action: Action to take (accept, dismiss)
+            
+        Returns:
+            True if popup was handled
+        """
+        try:
+            popup_handled = False
+            
+            def handle_dialog(dialog):
+                nonlocal popup_handled
+                if action == "accept":
+                    dialog.accept()
+                else:
+                    dialog.dismiss()
+                popup_handled = True
+            
+            page.on("dialog", handle_dialog)
+            
+            # Wait a bit to see if popup appears
+            await asyncio.sleep(1.0)
+            
+            return popup_handled
+            
+        except Exception as e:
+            print(f"⚠️  Popup handling failed: {e}")
+            return False
+    
+    async def get_page_performance(self, page: Page) -> Dict[str, Any]:
+        """
+        Get page performance metrics.
+        
+        Args:
+            page: Page instance
+            
+        Returns:
+            Performance metrics dictionary
+        """
+        try:
+            metrics = await page.evaluate("""
+                () => {
+                    const navigation = performance.getEntriesByType('navigation')[0];
+                    const paint = performance.getEntriesByType('paint');
+                    
+                    return {
+                        loadTime: navigation ? navigation.loadEventEnd - navigation.loadEventStart : 0,
+                        domContentLoaded: navigation ? navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart : 0,
+                        firstPaint: paint.find(p => p.name === 'first-paint')?.startTime || 0,
+                        firstContentfulPaint: paint.find(p => p.name === 'first-contentful-paint')?.startTime || 0,
+                        resourceCount: performance.getEntriesByType('resource').length,
+                        memoryUsage: performance.memory ? {
+                            used: performance.memory.usedJSHeapSize,
+                            total: performance.memory.totalJSHeapSize,
+                            limit: performance.memory.jsHeapSizeLimit
+                        } : null
+                    };
+                }
+            """)
+            
+            return metrics
+            
+        except Exception as e:
+            print(f"⚠️  Performance metrics extraction failed: {e}")
+            return {}
+    
+    async def save_page_content(self, page: Page, filename: Optional[str] = None, format: str = "html") -> Optional[str]:
+        """
+        Save page content to file.
+        
+        Args:
+            page: Page instance
+            filename: Optional filename
+            format: Content format (html, pdf)
+            
+        Returns:
+            Saved filename if successful
+        """
+        try:
+            if not filename:
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                ext = "pdf" if format == "pdf" else "html"
+                filename = f"page_content_{timestamp}.{ext}"
+            
+            if format == "pdf":
+                await page.pdf(path=filename, format="A4")
+            else:
+                content = await page.content()
+                with open(filename, 'w', encoding='utf-8') as f:
+                    f.write(content)
+            
+            return filename
+            
+        except Exception as e:
+            print(f"⚠️  Page content save failed: {e}")
+            return None
+
+    async def close_page(self, page: Page):
+        """
+        Close a specific page and remove it from tracking.
+        
+        Args:
+            page: Page instance to close
+        """
+        try:
+            if page in self.page_pool:
+                self.page_pool.remove(page)
+            
+            await page.close()
+            self.active_pages = max(0, self.active_pages - 1)
+            
+        except Exception as e:
+            print(f"⚠️  Error closing page: {e}")
+
     async def get_stats(self) -> Dict[str, Any]:
         """Get performance and usage statistics"""
         uptime = (datetime.utcnow() - self.stats["start_time"]).total_seconds()
