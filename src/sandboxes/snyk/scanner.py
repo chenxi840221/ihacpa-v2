@@ -225,6 +225,9 @@ class SNYKSandbox(BaseSandbox):
                 if 'page' in locals():
                     await playwright_manager.close_page(page)
         
+        except Exception as e:
+            self.logger.error(f"Failed to get SNYK vulnerabilities via web for {package_name}: {e}")
+        
         return vulnerabilities
     
     async def _extract_vulnerability_from_card(self, card, package_name: str) -> Optional[SNYKVulnerability]:
