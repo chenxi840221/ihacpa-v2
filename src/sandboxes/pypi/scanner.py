@@ -5,6 +5,7 @@ Fetches package information from the Python Package Index API.
 """
 
 import aiohttp
+import logging
 from typing import Optional, Dict, Any
 from datetime import datetime
 import asyncio
@@ -30,6 +31,7 @@ class PyPISandbox(BaseSandbox):
         self.base_url = config.get("base_url", "https://pypi.org/pypi")
         self.timeout = config.get("timeout", 30)
         self.session: Optional[aiohttp.ClientSession] = None
+        self.logger = logging.getLogger(__name__)
     
     async def _ensure_session(self):
         """Ensure HTTP session is available"""

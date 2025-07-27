@@ -6,12 +6,14 @@ NIST National Vulnerability Database integration with AI-enhanced analysis.
 
 import aiohttp
 import asyncio
+import logging
 from typing import Optional, Dict, Any, List
 from datetime import datetime, timedelta
 from urllib.parse import quote
 
 from ...core.base_scanner import BaseSandbox, ScanResult, VulnerabilityInfo, SeverityLevel, ConfidenceLevel
 from ...ai_layer.agents.cve_analyzer import CVEAnalyzer
+from ...utils.vulnerability_filter import VulnerabilityFilter
 from .models import NVDVulnerability
 
 
@@ -37,6 +39,8 @@ class NVDSandbox(BaseSandbox):
         
         self.session: Optional[aiohttp.ClientSession] = None
         self.cve_analyzer: Optional[CVEAnalyzer] = None
+        self.vulnerability_filter = VulnerabilityFilter()
+        self.logger = logging.getLogger(__name__)
     
     async def _ensure_session(self):
         """Ensure HTTP session is available"""
@@ -170,11 +174,14 @@ class NVDSandbox(BaseSandbox):
             "startIndex": 0
         }
         
-        # Limit search to recent CVEs to improve relevance
-        end_date = datetime.utcnow()
-        start_date = end_date - timedelta(days=self.days_back)
-        params["pubStartDate"] = start_date.strftime("%Y-%m-%dT%H:%M:%S.000")
-        params["pubEndDate"] = end_date.strftime("%Y-%m-%dT%H:%M:%S.000")
+        # Two-stage search strategy for better accuracy:
+        # 1. First try without date filter to get all CVEs
+        # 2. Let our vulnerability filter determine relevance
+        # This matches the manual review approach and avoids missing legitimate CVEs
+        
+        # Remove date filtering to match manual review methodology
+        # Our smart vulnerability filter will handle relevance assessment
+        # This ensures we don't miss legitimate CVEs due to arbitrary date cutoffs
         
         try:
             async with self.session.get(self.base_url, params=params) as response:
@@ -279,7 +286,7 @@ class NVDSandbox(BaseSandbox):
     
     def _is_cve_relevant(self, nvd_vuln: NVDVulnerability, package_name: str) -> bool:
         """
-        Check if a CVE is relevant to the package.
+        Check if a CVE is relevant to the package using smart filtering.
         
         Args:
             nvd_vuln: NVD vulnerability data
@@ -288,25 +295,42 @@ class NVDSandbox(BaseSandbox):
         Returns:
             True if CVE appears relevant
         """
-        package_lower = package_name.lower()
-        
-        # Check primary description
-        description = nvd_vuln.get_primary_description().lower()
-        if package_lower in description:
-            return True
-        
-        # Check if package appears in CPE configurations
+        # Get affected products from CPE configurations
+        affected_products = []
         for config in nvd_vuln.configurations:
             for cpe_match in config.cpe_match:
-                if cpe_match.vulnerable and package_lower in cpe_match.criteria.lower():
+                if cpe_match.vulnerable:
+                    affected_products.append(cpe_match.criteria)
+        
+        affected_products_str = ' '.join(affected_products)
+        
+        # Use smart filter to check relevance
+        is_relevant, confidence, reason = self.vulnerability_filter.is_python_related_cve(
+            cve_id=nvd_vuln.cve_id,
+            cve_description=nvd_vuln.get_primary_description(),
+            package_name=package_name,
+            affected_products=affected_products_str
+        )
+        
+        # Log filtering decision for transparency
+        if not is_relevant and confidence > 0.7:
+            self.logger.debug(f"Filtered out {nvd_vuln.cve_id} for {package_name}: {reason}")
+        
+        # For low confidence, fall back to basic string matching
+        if confidence < 0.5:
+            package_lower = package_name.lower()
+            description = nvd_vuln.get_primary_description().lower()
+            
+            # Basic relevance check
+            if package_lower in description:
+                return True
+            
+            # Check references
+            for ref in nvd_vuln.references:
+                if package_lower in str(ref.url).lower():
                     return True
         
-        # Check references
-        for ref in nvd_vuln.references:
-            if package_lower in str(ref.url).lower():
-                return True
-        
-        return False
+        return is_relevant
     
     async def _create_vulnerability_info(
         self, 

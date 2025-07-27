@@ -191,7 +191,8 @@ class SNYKSandbox(BaseSandbox):
             # Navigate to package security page
             package_url = f"{self.base_url}/package/pip/{quote(package_name)}"
             
-            async with playwright_manager.get_page() as page:
+            page = await playwright_manager.get_page()
+            try:
                 await page.goto(package_url)
                 
                 # Wait for content to load
@@ -218,8 +219,11 @@ class SNYKSandbox(BaseSandbox):
                 if vulnerabilities:
                     await self._enrich_vulnerability_details(page, vulnerabilities)
         
-        except Exception as e:
-            self.logger.error(f"Web scraping failed for {package_name}: {e}")
+            except Exception as e:
+                self.logger.error(f"Web scraping failed for {package_name}: {e}")
+            finally:
+                if 'page' in locals():
+                    await playwright_manager.close_page(page)
         
         return vulnerabilities
     
@@ -334,7 +338,8 @@ class SNYKSandbox(BaseSandbox):
             
             package_url = f"{self.base_url}/package/pip/{quote(package_name)}"
             
-            async with playwright_manager.get_page() as page:
+            page = await playwright_manager.get_page()
+            try:
                 await page.goto(package_url)
                 await page.wait_for_timeout(2000)
                 
@@ -364,6 +369,13 @@ class SNYKSandbox(BaseSandbox):
                 
                 return info
                 
+            except Exception as e:
+                self.logger.warning(f"Failed to get package info for {package_name}: {e}")
+                return None
+            finally:
+                if 'page' in locals():
+                    await playwright_manager.close_page(page)
+        
         except Exception as e:
             self.logger.warning(f"Failed to get package info for {package_name}: {e}")
             return None
