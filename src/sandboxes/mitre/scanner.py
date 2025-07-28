@@ -106,6 +106,7 @@ class MITRESandbox(BaseSandbox):
             
             # Search for CVEs
             cve_info = await self._search_cves(search_context)
+            print(f"🔍 MITRE search for '{package_name}': found {len(cve_info.vulnerabilities)} CVEs")
             
             # Apply AI enhancement to results
             if self.ai_layer and cve_info.vulnerabilities:
@@ -118,6 +119,8 @@ class MITRESandbox(BaseSandbox):
                 if self._is_relevant_to_package(vuln, package_name, current_version):
                     base_vuln = vuln.to_base_vulnerability()
                     base_vulnerabilities.append(base_vuln)
+            
+            print(f"📊 MITRE: {len(base_vulnerabilities)} relevant vulnerabilities for {package_name}")
             
             # Create result
             scan_duration = (datetime.utcnow() - scan_start).total_seconds()
@@ -476,24 +479,93 @@ class MITRESandbox(BaseSandbox):
     def _parse_web_cve(self, cve_id: str, html: str) -> Optional[MITREVulnerability]:
         """Parse CVE data from web page (basic extraction)"""
         try:
-            # Extract description
-            desc_match = re.search(r'<td[^>]*>\s*Description\s*</td>\s*<td[^>]*>(.*?)</td>', html, re.DOTALL | re.IGNORECASE)
+            # Extract description - updated pattern for current MITRE structure
             description = ""
+            
+            # Pattern: <th>Description</th> followed by <tr><td colspan="2">description content</td>
+            desc_match = re.search(
+                r'<th[^>]*>Description</th>\s*</tr>\s*<tr[^>]*>\s*<td[^>]*colspan="2"[^>]*>(.*?)</td>',
+                html, 
+                re.DOTALL | re.IGNORECASE
+            )
+            
             if desc_match:
-                description = re.sub(r'<[^>]+>', '', desc_match.group(1)).strip()
+                # Remove HTML tags and clean up
+                raw_description = desc_match.group(1)
+                description = re.sub(r'<[^>]+>', '', raw_description).strip()
+                # Remove extra whitespace and newlines
+                description = ' '.join(description.split())
             
-            # Extract references
+            # Extract references - look for references section and extract URLs
             references = []
-            ref_matches = re.findall(r'<a[^>]+href="([^"]+)"[^>]*>([^<]+)</a>', html)
-            for url, name in ref_matches:
-                if url.startswith('http'):
-                    references.append(MITREReference(url=url, name=name))
             
+            # Find the references section
+            ref_section_match = re.search(
+                r'<th[^>]*>References?</th>.*?<td[^>]*colspan="2"[^>]*>(.*?)</td>',
+                html,
+                re.DOTALL | re.IGNORECASE
+            )
+            
+            if ref_section_match:
+                ref_content = ref_section_match.group(1)
+                # Extract all links from the references section
+                ref_matches = re.findall(r'<a[^>]+href="([^"]+)"[^>]*>([^<]+)</a>', ref_content)
+                for url, name in ref_matches:
+                    if url.startswith('http'):
+                        # Clean up the name (remove prefixes like "CONFIRM:", "MISC:", etc.)
+                        clean_name = re.sub(r'^[A-Z]+:', '', name).strip()
+                        references.append(MITREReference(url=url, name=clean_name))
+            
+            # Try to extract affected products/vendors from description
+            affected_products = []
+            affected_vendors = []
+            
+            if description:
+                description_lower = description.lower()
+                
+                # Look for common product patterns in the description
+                product_patterns = [
+                    r'python[^a-zA-Z]',
+                    r'django[^a-zA-Z]',
+                    r'requests[^a-zA-Z]',
+                    r'flask[^a-zA-Z]',
+                    r'numpy[^a-zA-Z]',
+                    r'pillow[^a-zA-Z]',
+                    r'pyyaml[^a-zA-Z]',
+                    r'jinja2[^a-zA-Z]',
+                    r'(\w+)\s+package',
+                    r'(\w+)\s+library',
+                    r'(\w+)\s+framework'
+                ]
+                
+                for pattern in product_patterns:
+                    matches = re.findall(pattern, description_lower)
+                    for match in matches:
+                        if isinstance(match, str) and len(match) > 2:
+                            affected_products.append(match.strip())
+                
+                # Look for vendor patterns
+                vendor_patterns = [
+                    r'(\w+)\s+foundation',
+                    r'(\w+)\s+software',
+                    r'(\w+)\s+project',
+                    r'(\w+)\s+team'
+                ]
+                
+                for pattern in vendor_patterns:
+                    matches = re.findall(pattern, description_lower)
+                    for match in matches:
+                        if isinstance(match, str) and len(match) > 2:
+                            affected_vendors.append(match.strip())
+            
+            # Create the vulnerability with extracted data
             return MITREVulnerability(
                 cve_id=cve_id,
                 description=description,
                 references=references,
-                published_date=datetime.utcnow()  # Placeholder
+                affected_products=list(set(affected_products)),  # Remove duplicates
+                affected_vendors=list(set(affected_vendors)),    # Remove duplicates
+                published_date=datetime.utcnow()  # Placeholder - could be extracted from HTML if needed
             )
             
         except Exception as e:
@@ -737,13 +809,93 @@ class MITRESandbox(BaseSandbox):
         if package_lower in description_lower:
             return True
         
+        # Check for package variations (e.g., django vs Django)
+        package_variations = [
+            package_lower,
+            package_lower.replace('-', '_'),
+            package_lower.replace('_', '-'),
+            package_lower.replace('-', ''),
+            package_lower.replace('_', '')
+        ]
+        
+        # Check description for any package variation
+        for variation in package_variations:
+            if variation in description_lower:
+                return True
+        
         # Product mention
-        if any(package_lower in prod.lower() for prod in vuln.affected_products):
+        if vuln.affected_products:
+            for prod in vuln.affected_products:
+                prod_lower = prod.lower()
+                for variation in package_variations:
+                    if variation in prod_lower or prod_lower in variation:
+                        return True
+        
+        # Vendor mention (less reliable but still useful)
+        if vuln.affected_vendors:
+            for vendor in vuln.affected_vendors:
+                vendor_lower = vendor.lower()
+                for variation in package_variations:
+                    if variation in vendor_lower:
+                        return True
+        
+        # Python-specific context matching
+        python_context_keywords = [
+            f"python {package_lower}",
+            f"python-{package_lower}",
+            f"py{package_lower}",
+            f"py-{package_lower}",
+            f"{package_lower} package",
+            f"{package_lower} library",
+            f"pip install {package_lower}"
+        ]
+        
+        for keyword in python_context_keywords:
+            if keyword in description_lower:
+                return True
+        
+        # Check if it's a Python-related CVE at all
+        python_indicators = ["python", "pip", "pypi", "package", "library", "module"]
+        has_python_context = any(indicator in description_lower for indicator in python_indicators)
+        
+        # If it has Python context and mentions something similar to the package name
+        if has_python_context:
+            # Fuzzy matching for similar names
+            for variation in package_variations:
+                if len(variation) > 3:  # Avoid too short names
+                    # Check if the variation appears as a word boundary
+                    import re
+                    pattern = r'\b' + re.escape(variation) + r'\b'
+                    if re.search(pattern, description_lower):
+                        return True
+        
+        # For very specific packages, check if CVE is about the right technology
+        # (e.g., Django CVEs should be web-related, requests CVEs should be HTTP-related)
+        if self._is_technology_match(package_lower, description_lower):
             return True
         
-        # Vendor mention (less reliable)
-        if any(package_lower in vendor.lower() for vendor in vuln.affected_vendors):
-            return True
+        return False
+    
+    def _is_technology_match(self, package_name: str, description: str) -> bool:
+        """Check if CVE technology matches package purpose"""
+        tech_mappings = {
+            'django': ['web', 'framework', 'application', 'server', 'http'],
+            'flask': ['web', 'framework', 'application', 'server', 'http'],
+            'requests': ['http', 'https', 'request', 'client', 'url'],
+            'urllib3': ['http', 'https', 'url', 'client'],
+            'numpy': ['array', 'numeric', 'mathematical', 'computation'],
+            'pandas': ['data', 'analysis', 'dataframe', 'csv'],
+            'pillow': ['image', 'jpeg', 'png', 'pil'],
+            'cryptography': ['crypto', 'encryption', 'certificate', 'ssl', 'tls'],
+            'paramiko': ['ssh', 'sftp', 'remote', 'connection'],
+            'pyyaml': ['yaml', 'serialization', 'deserialization'],
+            'jinja2': ['template', 'injection', 'render'],
+            'sqlalchemy': ['sql', 'database', 'query', 'orm']
+        }
+        
+        if package_name in tech_mappings:
+            keywords = tech_mappings[package_name]
+            return any(keyword in description for keyword in keywords)
         
         return False
     

@@ -8,8 +8,8 @@ import os
 import sys
 from pathlib import Path
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent / 'src'))
+# Add src to path - navigate to parent directory for imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 async def test_azure_openai():
     """Test Azure OpenAI integration"""
@@ -40,7 +40,7 @@ async def test_azure_openai():
     # Test AI factory
     print("\n🤖 Testing AI Factory:")
     try:
-        from ai_layer.chain_factory import AIChainFactory
+        from src.ai_layer.chain_factory import AIChainFactory
         
         factory = AIChainFactory({
             "provider": "azure",
@@ -70,7 +70,7 @@ async def test_azure_openai():
     # Test CVE Analyzer
     print("\n🔍 Testing CVE Analyzer:")
     try:
-        from ai_layer.agents.cve_analyzer import CVEAnalyzer
+        from src.ai_layer.agents.cve_analyzer import CVEAnalyzer
         
         analyzer = CVEAnalyzer(factory)
         
@@ -101,7 +101,7 @@ async def test_full_pipeline():
     print("=" * 50)
     
     try:
-        from core.sandbox_manager import SandboxManager
+        from src.core.sandbox_manager import SandboxManager
         
         # Initialize with Azure configuration
         manager = SandboxManager({

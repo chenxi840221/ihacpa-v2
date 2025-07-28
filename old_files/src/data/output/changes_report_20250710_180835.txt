@@ -1,0 +1,65 @@
+IHACPA AUTOMATION CHANGES REPORT
+============================================================
+Generated: 2025-07-10 18:08:36
+Original file: ../02-Source-Data/2025-07-09 IHACPA Review of ALL existing PYTHON Packages.xlsx
+Output file: test_xlwt_final_fix.xlsx
+Dry run mode: False
+
+EXCEL FILE CHANGES REPORT
+==================================================
+
+Total packages modified: 1
+Total field changes: 8
+Most changed columns: E (1), H (1), M (1), P (1), R (1)
+
+DETAILED CHANGES BY PACKAGE:
+------------------------------
+
+📦 xlwt (Row 477):
+  🔄 Date Published (Col E): '2017-08-22 06:47:15.281000' → '2017-08-22 06:47:15.281159'
+  🔄 Latest Release Date (Col H): '2017-08-22 06:47:15.281000' → '2017-08-22 06:47:15.281159'
+  🔄 Github Advisory Result (Col M): 'Manual review required - check https://github.com/advisories?query=ecosystem%3Apip%20xlwt' → 'GitHub Security Advisory Analysis: FOUND - Multiple advisories affect xlwt, including remote code execution vulnerabilities impacting version 1.3.0. Severity: HIGH. Current version 1.3.0: AFFECTED. Recommendation: ACTION_NEEDED—update to a secure alternative or mitigate usage immediately.'
+  🔄 Nist Nvd Result (Col P): 'No vulnerabilities found in NIST NVD' → 'None found'
+  🔄 Mitre Cve Result (Col R): 'Manual review required - check https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=xlwt' → 'None found'
+  🔄 Snyk Result (Col T): 'Manual review required - check https://security.snyk.io/vuln/pip/xlwt' → 'SNYK Analysis: FOUND – SNYK reports a known vulnerability (arbitrary code execution, SNYK-PYTHON-XLWT-1049766) affecting xlwt version 1.3.0. Severity: HIGH. Current version 1.3.0: AFFECTED. Recommendation: ACTION_NEEDED – Upgrade to a secure alternative or mitigate risk, as this version is not safe to use.'
+  🔄 Exploit Db Result (Col V): 'Manual review required - check https://www.exploit-db.com/search?text=xlwt' → 'None found'
+  🔄 Recommendation (Col W): 'No issues found - current version is up to date' → 'SECURITY RISK: 2 vulnerabilities found | HIGH PRIORITY: HIGH severity vulnerabilities detected | Sources: GitHub Advisory: 1 (HIGH), SNYK: 1 (HIGH) | Review security advisories before deployment'
+
+CHANGES BY COLUMN:
+--------------------
+Column E: 1 changes
+Column H: 1 changes
+Column M: 1 changes
+Column P: 1 changes
+Column R: 1 changes
+Column T: 1 changes
+Column V: 1 changes
+Column W: 1 changes
+
+COLOR-CODED CHANGES SUMMARY
+========================================
+Total changes: 9
+Affected rows: 1
+
+CHANGES BY COLOR TYPE:
+  VERSION_UPDATE: 2 changes - Version information updated (Light orange background, dark orange text)
+  UPDATED: 2 changes - General updates (Light blue background, dark blue text)
+  NEW_DATA: 3 changes - New data added (Light green background, dark green text)
+  SECURITY_RISK: 2 changes - Security vulnerabilities found (Light red background, dark red text)
+
+CHANGES BY FIELD:
+  date_published: 1 changes
+  exploit_db_result: 1 changes
+  github_advisory_result: 1 changes
+  latest_release_date: 1 changes
+  mitre_cve_result: 1 changes
+  nist_nvd_result: 1 changes
+  recommendation: 1 changes
+  requires: 1 changes
+  snyk_result: 1 changes
+
+PROCESSING STATISTICS:
+------------------------------
+Packages processed: 1
+Packages failed: 0
+Success rate: 100.0%

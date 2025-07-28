@@ -1,0 +1,68 @@
+IHACPA AUTOMATION CHANGES REPORT
+============================================================
+Generated: 2025-07-10 17:49:16
+Original file: ../02-Source-Data/2025-07-09 IHACPA Review of ALL existing PYTHON Packages.xlsx
+Output file: test_proceed_safe.xlsx
+Dry run mode: False
+
+EXCEL FILE CHANGES REPORT
+==================================================
+
+Total packages modified: 1
+Total field changes: 9
+Most changed columns: E (1), G (1), H (1), J (1), L (1)
+
+DETAILED CHANGES BY PACKAGE:
+------------------------------
+
+📦 backcall (Row 35):
+  🔄 Date Published (Col E): '2020-06-10 00:00:00' → '2020-06-09 15:11:30.870875'
+  🔄 Pypi Latest Link (Col G): '=HYPERLINK(_xlfn.CONCAT("https://pypi.org/project/",$B35,"/",$F35))' → 'https://pypi.org/project/backcall/0.2.0/'
+  🔄 Latest Release Date (Col H): '2020-06-10 00:00:00' → '2020-06-09 15:11:30.870875'
+  🔄 Development Status (Col J): 'n/a' → 'Unknown'
+  🔄 Github Advisory Url (Col L): '=HYPERLINK(_xlfn.CONCAT($K35,"/security"))' → 'https://github.com/takluyver/backcall/security/advisories'
+  🔄 Nist Nvd Url (Col O): '=HYPERLINK(_xlfn.CONCAT("https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=",$B35,"&search_type=all&isCpeNameSearch=false"),CONCATENATE("NVD NIST ",$B35," link"))' → 'https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch=backcall'
+  🔄 Mitre Cve Url (Col Q): '=HYPERLINK(CONCATENATE("https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=",$B35),CONCATENATE("CVE MITRE ",$B35," link"))' → 'https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=backcall'
+  🔄 Snyk Url (Col S): '=HYPERLINK(CONCATENATE("https://security.snyk.io/vuln?search=",$B35),CONCATENATE("Snyk ",$B35," link"))' → 'https://security.snyk.io/vuln/pip/backcall'
+  🔄 Exploit Db Url (Col U): '=HYPERLINK(CONCATENATE("https://www.exploit-db.com/search?q=",$B35,"&verified=true"),CONCATENATE("Exploit-DB ",$B35," link"))' → 'https://www.exploit-db.com/search?text=backcall'
+
+CHANGES BY COLUMN:
+--------------------
+Column E: 1 changes
+Column G: 1 changes
+Column H: 1 changes
+Column J: 1 changes
+Column L: 1 changes
+Column O: 1 changes
+Column Q: 1 changes
+Column S: 1 changes
+Column U: 1 changes
+
+COLOR-CODED CHANGES SUMMARY
+========================================
+Total changes: 10
+Affected rows: 1
+
+CHANGES BY COLOR TYPE:
+  NEW_DATA: 5 changes - New data added (Light green background, dark green text)
+  VERSION_UPDATE: 2 changes - Version information updated (Light orange background, dark orange text)
+  UPDATED: 2 changes - General updates (Light blue background, dark blue text)
+  GITHUB_ADDED: 1 changes - GitHub information added (Light purple background, dark purple text)
+
+CHANGES BY FIELD:
+  date_published: 1 changes
+  development_status: 1 changes
+  exploit_db_url: 1 changes
+  github_advisory_url: 1 changes
+  latest_release_date: 1 changes
+  mitre_cve_url: 1 changes
+  nist_nvd_url: 1 changes
+  pypi_latest_link: 1 changes
+  requires: 1 changes
+  snyk_url: 1 changes
+
+PROCESSING STATISTICS:
+------------------------------
+Packages processed: 1
+Packages failed: 0
+Success rate: 100.0%

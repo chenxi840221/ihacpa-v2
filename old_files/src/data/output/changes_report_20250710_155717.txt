@@ -1,0 +1,97 @@
+IHACPA AUTOMATION CHANGES REPORT
+============================================================
+Generated: 2025-07-10 15:57:17
+Original file: ../02-Source-Data/2025-07-09 IHACPA Review of ALL existing PYTHON Packages.xlsx
+Output file: test_github_ai.xlsx
+Dry run mode: False
+
+EXCEL FILE CHANGES REPORT
+==================================================
+
+Total packages modified: 2
+Total field changes: 22
+Most changed columns: E (2), H (2), M (2), R (2), T (2)
+
+DETAILED CHANGES BY PACKAGE:
+------------------------------
+
+📦 agate (Row 4):
+  🔄 Date Published (Col E): '2023-12-22 00:00:00' → '2023-12-21 20:05:21.954929'
+  🔄 Pypi Latest Link (Col G): '=HYPERLINK(_xlfn.CONCAT("https://pypi.org/project/",$B4,"/",$F4))' → 'https://pypi.org/project/agate/1.13.0/'
+  🔄 Latest Release Date (Col H): '2025-01-29 00:00:00' → '2025-01-29 06:24:06.501066'
+  🔄 Requires (Col I): 'n/a' → 'Babel, isodate, leather, parsedatetime!, python-slugify'
+  🔄 Development Status (Col J): '5 - Production/ Stable' → '5 - Production/Stable'
+  🔄 Github Advisory Url (Col L): 'https://github.com/wireservice/agate/security' → 'https://github.com/wireservice/agate/security/advisories'
+  🔄 Github Advisory Result (Col M): 'No published security advisories' → 'GitHub Security Advisory Analysis: NOT_FOUND – No security advisories affecting agate version 1.9.1 are listed in the GitHub Security Advisory database. Severity: NONE. Current version 1.9.1: NOT_AFFECTED. Recommendation: SAFE_TO_USE.'
+  🔄 Nist Nvd Url (Col O): '=HYPERLINK(_xlfn.CONCAT("https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=",$B4,"&search_type=all&isCpeNameSearch=false"),CONCATENATE("NVD NIST ",$B4," link"))' → 'https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch=agate'
+  🔄 Nist Nvd Result (Col P): 'Package version not listed' → 'Found 3 vulnerabilities in NIST NVD'
+  🔄 Mitre Cve Url (Col Q): '=HYPERLINK(CONCATENATE("https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=",$B4),CONCATENATE("CVE MITRE ",$B4," link"))' → 'https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=agate'
+  🔄 Mitre Cve Result (Col R): 'Package version not listed' → 'CVE Analysis: NOT_FOUND – No known CVEs affect agate version 1.9.1 according to current public databases. Severity: NONE. Current version 1.9.1: NOT_AFFECTED. Recommendation: SAFE_TO_USE.'
+  🔄 Snyk Url (Col S): '=HYPERLINK(CONCATENATE("https://security.snyk.io/vuln?search=",$B4),CONCATENATE("Snyk ",$B4," link"))' → 'https://security.snyk.io/vuln/pip/agate'
+  🔄 Snyk Result (Col T): 'Package version not listed' → 'SNYK Analysis: NOT_FOUND – No vulnerabilities affecting agate version 1.9.1 are listed in the SNYK database. Severity: NONE. Current version 1.9.1: NOT_AFFECTED. Recommendation: SAFE_TO_USE.'
+  🔄 Exploit Db Url (Col U): '=HYPERLINK(CONCATENATE("https://www.exploit-db.com/search?q=",$B4,"&verified=true"),CONCATENATE("Exploit-DB ",$B4," link"))' → 'https://www.exploit-db.com/search?text=agate'
+  🔄 Exploit Db Result (Col V): 'Package version not listed' → 'Exploit Database Analysis: NOT_FOUND - No public exploits for agate 1.9.1 are listed in Exploit Database. Severity: NONE. Current version 1.9.1: NOT_AFFECTED. Recommendation: SAFE_TO_USE.'
+  🔄 Recommendation (Col W): 'PROCEED' → 'Update from 1.9.1 to 1.13.0 | SECURITY RISK: 3 vulnerabilities found | Review security advisories before deployment'
+
+📦 requests (Row 369):
+  🔄 Date Published (Col E): '2025-06-09 16:43:05.728000' → '2023-04-26 15:24:31.555832'
+  🔄 Latest Release Date (Col H): '2025-06-09 16:43:05.728000' → '2025-06-09 16:43:05.728107'
+  🔄 Github Advisory Result (Col M): 'Manual review required - check https://github.com/psf/requests/security/advisories' → 'GitHub Security Advisory Analysis: NOT_FOUND – No security advisories affecting requests version 2.29.0 are listed in the GitHub Security Advisory database. Severity: NONE. Current version 2.29.0: NOT_AFFECTED. Recommendation: SAFE_TO_USE.'
+  🔄 Mitre Cve Result (Col R): 'Manual review required - check https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=requests' → 'CVE Analysis: NOT_FOUND – No publicly disclosed CVEs affect requests version 2.29.0 as of the latest data. Severity: NONE. Current version 2.29.0: NOT_AFFECTED. Recommendation: SAFE_TO_USE.'
+  🔄 Snyk Result (Col T): 'Manual review required - check https://security.snyk.io/vuln/pip/requests' → 'SNYK Analysis: FOUND – SNYK reports known vulnerabilities affecting requests version 2.29.0, including at least one with HIGH severity. Severity: HIGH. Current version 2.29.0: AFFECTED. Recommendation: ACTION_NEEDED – update to the latest secure version as soon as possible.'
+  🔄 Exploit Db Result (Col V): 'Manual review required - check https://www.exploit-db.com/search?text=requests' → 'Exploit Database Analysis: NOT_FOUND - No public exploits for the requests package (version 2.29.0) are listed in Exploit Database. Severity: NONE. Current version 2.29.0: NOT_AFFECTED. Recommendation: SAFE_TO_USE.'
+
+CHANGES BY COLUMN:
+--------------------
+Column E: 2 changes
+Column G: 1 changes
+Column H: 2 changes
+Column I: 1 changes
+Column J: 1 changes
+Column L: 1 changes
+Column M: 2 changes
+Column O: 1 changes
+Column P: 1 changes
+Column Q: 1 changes
+Column R: 2 changes
+Column S: 1 changes
+Column T: 2 changes
+Column U: 1 changes
+Column V: 2 changes
+Column W: 1 changes
+
+COLOR-CODED CHANGES SUMMARY
+========================================
+Total changes: 22
+Affected rows: 2
+
+CHANGES BY COLOR TYPE:
+  VERSION_UPDATE: 4 changes - Version information updated (Light orange background, dark orange text)
+  UPDATED: 9 changes - General updates (Light blue background, dark blue text)
+  NEW_DATA: 6 changes - New data added (Light green background, dark green text)
+  SECURITY_RISK: 2 changes - Security vulnerabilities found (Light red background, dark red text)
+  GITHUB_ADDED: 1 changes - GitHub information added (Light purple background, dark purple text)
+
+CHANGES BY FIELD:
+  date_published: 2 changes
+  development_status: 1 changes
+  exploit_db_result: 2 changes
+  exploit_db_url: 1 changes
+  github_advisory_result: 2 changes
+  github_advisory_url: 1 changes
+  latest_release_date: 2 changes
+  mitre_cve_result: 2 changes
+  mitre_cve_url: 1 changes
+  nist_nvd_result: 1 changes
+  nist_nvd_url: 1 changes
+  pypi_latest_link: 1 changes
+  recommendation: 1 changes
+  requires: 1 changes
+  snyk_result: 2 changes
+  snyk_url: 1 changes
+
+PROCESSING STATISTICS:
+------------------------------
+Packages processed: 2
+Packages failed: 0
+Success rate: 100.0%

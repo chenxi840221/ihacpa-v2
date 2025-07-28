@@ -1,0 +1,10 @@
+IHACPA Python Package Review Automation Report
+============================================================
+Generated: 2025-07-09 18:45:49
+Excel file: test_output.xlsx
+Total packages: 486
+
+Processing Summary:
+------------------------------
+Processed: 2
+Failed: 0

@@ -1,0 +1,64 @@
+IHACPA AUTOMATION CHANGES REPORT
+============================================================
+Generated: 2025-07-10 18:10:25
+Original file: ../02-Source-Data/2025-07-09 IHACPA Review of ALL existing PYTHON Packages.xlsx
+Output file: test_safe_package_fix.xlsx
+Dry run mode: False
+
+EXCEL FILE CHANGES REPORT
+==================================================
+
+Total packages modified: 1
+Total field changes: 8
+Most changed columns: E (1), H (1), M (1), P (1), R (1)
+
+DETAILED CHANGES BY PACKAGE:
+------------------------------
+
+📦 setuptools (Row 394):
+  🔄 Date Published (Col E): '2025-05-27 00:56:49.664000' → '2023-05-19 19:38:35.610122'
+  🔄 Latest Release Date (Col H): '2025-05-27 00:56:49.664000' → '2025-05-27 00:56:49.664463'
+  🔄 Github Advisory Result (Col M): 'Manual review required - check https://github.com/pypa/setuptools/security/advisories' → 'No published security advisories'
+  🔄 Nist Nvd Result (Col P): 'No vulnerabilities found in NIST NVD' → 'Found 3 vulnerabilities in NIST NVD'
+  🔄 Mitre Cve Result (Col R): 'Manual review required - check https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=setuptools' → 'None found'
+  🔄 Snyk Result (Col T): 'Manual review required - check https://security.snyk.io/vuln/pip/setuptools' → 'None found'
+  🔄 Exploit Db Result (Col V): 'Manual review required - check https://www.exploit-db.com/search?text=setuptools' → 'None found'
+  🔄 Recommendation (Col W): 'Update from 67.8.0 to 80.9.0' → 'Update from 67.8.0 to 80.9.0 | SECURITY RISK: 3 vulnerabilities found | Sources: NIST NVD: 3 (NONE) | Review security advisories before deployment'
+
+CHANGES BY COLUMN:
+--------------------
+Column E: 1 changes
+Column H: 1 changes
+Column M: 1 changes
+Column P: 1 changes
+Column R: 1 changes
+Column T: 1 changes
+Column V: 1 changes
+Column W: 1 changes
+
+COLOR-CODED CHANGES SUMMARY
+========================================
+Total changes: 8
+Affected rows: 1
+
+CHANGES BY COLOR TYPE:
+  VERSION_UPDATE: 2 changes - Version information updated (Light orange background, dark orange text)
+  SECURITY_RISK: 2 changes - Security vulnerabilities found (Light red background, dark red text)
+  NEW_DATA: 3 changes - New data added (Light green background, dark green text)
+  UPDATED: 1 changes - General updates (Light blue background, dark blue text)
+
+CHANGES BY FIELD:
+  date_published: 1 changes
+  exploit_db_result: 1 changes
+  github_advisory_result: 1 changes
+  latest_release_date: 1 changes
+  mitre_cve_result: 1 changes
+  nist_nvd_result: 1 changes
+  recommendation: 1 changes
+  snyk_result: 1 changes
+
+PROCESSING STATISTICS:
+------------------------------
+Packages processed: 1
+Packages failed: 0
+Success rate: 100.0%

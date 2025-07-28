@@ -12,8 +12,8 @@ from datetime import datetime
 from pathlib import Path
 import sys
 
-# Add src to path - use absolute import
-sys.path.insert(0, str(Path(__file__).parent))
+# Add src to path - navigate to parent directory for imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.core.sandbox_manager import SandboxManager
 

@@ -52,8 +52,9 @@ class SandboxManager:
         """Initialize all core components"""
         try:
             # Initialize cache manager
-            if self.config.get("redis", {}).get("enabled", True):
-                redis_url = self.config.get("redis", {}).get("url", "redis://localhost:6379")
+            redis_config = self._get_config_value("redis", {})
+            if self._get_nested_config_value(redis_config, "enabled", True):
+                redis_url = self._get_nested_config_value(redis_config, "url", "redis://localhost:6379")
                 self.cache_manager = CacheManager(redis_url)
                 await self.cache_manager.connect()
                 self.logger.info("✅ Cache manager initialized")
@@ -63,9 +64,12 @@ class SandboxManager:
             self.logger.info("✅ Rate limiter initialized")
             
             # Initialize AI layer
-            if self.config.get("ai", {}).get("enabled", True):
+            ai_config = self._get_config_value("ai", {})
+            if self._get_nested_config_value(ai_config, "enabled", True):
                 from ..ai_layer.chain_factory import initialize_ai_layer
-                self.ai_layer = initialize_ai_layer(self.config.get("ai", {}))
+                # Convert config object to dict if needed
+                ai_config_dict = ai_config.__dict__ if hasattr(ai_config, '__dict__') and not isinstance(ai_config, dict) else ai_config
+                self.ai_layer = initialize_ai_layer(ai_config_dict)
                 self.logger.info("✅ AI layer initialized")
             
             # Register default sandboxes
@@ -81,20 +85,28 @@ class SandboxManager:
         """Register all available sandboxes"""
         try:
             # Import and register PyPI sandbox
-            from ..sandboxes.pypi import PyPISandbox
-            await self.register_sandbox("pypi", PyPISandbox, {
-                "base_url": "https://pypi.org/pypi",
-                "timeout": 30
-            })
+            try:
+                from ..sandboxes.pypi import PyPISandbox
+                await self.register_sandbox("pypi", PyPISandbox, {
+                    "base_url": "https://pypi.org/pypi",
+                    "timeout": 30
+                })
+                self.logger.info("✅ PyPI sandbox registered")
+            except ImportError as e:
+                self.logger.warning(f"PyPI sandbox not available: {e}")
             
             # Import and register NVD sandbox
-            from ..sandboxes.nvd import NVDSandbox
-            await self.register_sandbox("nvd", NVDSandbox, {
-                "base_url": "https://services.nvd.nist.gov/rest/json/cves/2.0",
-                "timeout": 30,
-                "max_results": 100,
-                "days_back": 365
-            })
+            try:
+                from ..sandboxes.nvd import NVDSandbox
+                await self.register_sandbox("nvd", NVDSandbox, {
+                    "base_url": "https://services.nvd.nist.gov/rest/json/cves/2.0",
+                    "timeout": 30,
+                    "max_results": 100,
+                    "days_back": 365
+                })
+                self.logger.info("✅ NVD sandbox registered")
+            except ImportError as e:
+                self.logger.warning(f"NVD sandbox not available: {e}")
             
             # Import and register SNYK sandbox
             try:
@@ -134,12 +146,13 @@ class SandboxManager:
             
             # Import and register Exploit-DB sandbox (if implemented)
             try:
-                from ..sandboxes.exploit_db import ExploitDBSandbox
-                await self.register_sandbox("exploit_db", ExploitDBSandbox, {
+                from ..sandboxes.exploit_db import ExploitDBScanner
+                await self.register_sandbox("exploit_db", ExploitDBScanner, {
                     "base_url": "https://www.exploit-db.com",
                     "timeout": 30,
                     "max_results": 50
                 })
+                self.logger.info("✅ Exploit-DB sandbox registered")
             except ImportError as e:
                 self.logger.warning(f"Exploit-DB sandbox not available: {e}")
             
@@ -647,3 +660,62 @@ class SandboxManager:
     def __getitem__(self, sandbox_name: str) -> BaseSandbox:
         """Get sandbox by name"""
         return self.sandboxes[sandbox_name]
+    
+    async def get_sandbox(self, sandbox_name: str) -> Optional[BaseSandbox]:
+        """
+        Get a specific sandbox by name.
+        
+        Args:
+            sandbox_name: Name of the sandbox to retrieve
+            
+        Returns:
+            BaseSandbox instance if found, None otherwise
+        """
+        return self.sandboxes.get(sandbox_name)
+    
+    def _get_config_value(self, key: str, default: Any = None) -> Any:
+        """
+        Get configuration value with robust handling of both dict and object configs.
+        
+        Args:
+            key: Configuration key to retrieve
+            default: Default value if key not found
+            
+        Returns:
+            Configuration value or default
+        """
+        try:
+            if isinstance(self.config, dict):
+                return self.config.get(key, default)
+            elif hasattr(self.config, key):
+                return getattr(self.config, key, default)
+            elif hasattr(self.config, '__dict__') and key in self.config.__dict__:
+                return self.config.__dict__[key]
+            else:
+                return default
+        except Exception:
+            return default
+    
+    def _get_nested_config_value(self, config_obj: Any, key: str, default: Any = None) -> Any:
+        """
+        Get nested configuration value with robust handling.
+        
+        Args:
+            config_obj: Configuration object or dict
+            key: Configuration key to retrieve
+            default: Default value if key not found
+            
+        Returns:
+            Configuration value or default
+        """
+        try:
+            if isinstance(config_obj, dict):
+                return config_obj.get(key, default)
+            elif hasattr(config_obj, key):
+                return getattr(config_obj, key, default)
+            elif hasattr(config_obj, '__dict__') and key in config_obj.__dict__:
+                return config_obj.__dict__[key]
+            else:
+                return default
+        except Exception:
+            return default

@@ -70,6 +70,11 @@ class ScanResult:
     def __post_init__(self):
         if self.metadata is None:
             self.metadata = {}
+    
+    @property
+    def total_vulnerabilities(self) -> int:
+        """Get total number of vulnerabilities found"""
+        return len(self.vulnerabilities)
 
 
 class BaseSandbox(ABC):

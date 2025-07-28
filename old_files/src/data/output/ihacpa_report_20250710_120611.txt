@@ -1,0 +1,10 @@
+IHACPA Python Package Review Automation Report
+============================================================
+Generated: 2025-07-10 12:06:11
+Excel file: test_azure_fix2.xlsx
+Total packages: 486
+
+Processing Summary:
+------------------------------
+Processed: 2
+Failed: 0

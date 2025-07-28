@@ -102,6 +102,7 @@ class SNYKSandbox(BaseSandbox):
         try:
             # Get package vulnerabilities
             vulnerabilities = await self._get_package_vulnerabilities(package_name)
+            print(f"🔍 SNYK search for '{package_name}': found {len(vulnerabilities)} vulnerabilities")
             
             # Get package information
             package_info = await self._get_package_info(package_name)
@@ -122,6 +123,8 @@ class SNYKSandbox(BaseSandbox):
                 
                 base_vuln = vuln.to_base_vulnerability()
                 base_vulnerabilities.append(base_vuln)
+            
+            print(f"📊 SNYK: {len(base_vulnerabilities)} relevant vulnerabilities for {package_name}")
             
             # Create result
             scan_duration = (datetime.utcnow() - scan_start).total_seconds()

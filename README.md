@@ -2,7 +2,7 @@
 
 **Modern, Modular, AI-Powered Vulnerability Scanning System**
 
-[![Version](https://img.shields.io/badge/version-2.0.3-blue.svg)](https://github.com/ihacpa/python-review-automation)
+[![Version](https://img.shields.io/badge/version-2.0.4-blue.svg)](https://github.com/ihacpa/python-review-automation)
 [![Azure OpenAI](https://img.shields.io/badge/Azure_OpenAI-Integrated-green.svg)](https://azure.microsoft.com/en-us/products/cognitive-services/openai-service)
 [![Performance](https://img.shields.io/badge/Performance-9x_Faster-brightgreen.svg)](#performance-benchmarks)
 [![Architecture](https://img.shields.io/badge/Architecture-Modular-orange.svg)](#modular-architecture)
@@ -10,9 +10,18 @@
 
 > **IHACPA v2.0** represents a complete modernization of Python package vulnerability scanning, featuring AI-enhanced CVE analysis, modular sandbox architecture, and production-grade reliability with 9x performance improvements over legacy systems.
 
-## 🎉 **Latest Update: Critical Runtime Fixes (2025-07-28)**
+## 🎉 **Latest Update: Sophisticated Vulnerability Analysis Restored (2025-07-28)**
 
-**Status**: ✅ **PRODUCTION READY** - All scanners operational with 100% success rate
+**Status**: ✅ **PRODUCTION READY** - Advanced vulnerability classification system fully operational
+
+### 🔧 **v2.0.4 Sophisticated Analysis Restoration**
+- **🧠 4-Tier Classification System**: Restored sophisticated vulnerability classification (`vulnerable`, `safe`, `manual_review`, `none_found`)
+- **🎯 Enhanced Version Impact Checking**: Advanced CPE parsing and version range analysis for NVD, MITRE, SNYK, and ExploitDB
+- **📊 Detailed Assessment Summaries**: Replaced generic messages with specific assessments like "VULNERABLE - 3 CVEs affect v2.25.1 (Highest: HIGH)"
+- **🎨 Accurate Color Coding**: Fixed color definitions to match old version's proven system (`security_risk`, `new_data`, `updated`, `not_available`)
+- **⚡ Commercial Intelligence**: Enhanced SNYK processor with sophisticated interval notation parsing
+- **🔍 Authoritative Analysis**: MITRE processor with enhanced Python package relevance detection
+- **🚨 Exploit Risk Assessment**: ExploitDB processor with severity escalation for public exploits
 
 ### 🔧 **v2.0.3 Runtime Error Fixes**
 - **🔧 PlaywrightManager Fix**: Added missing `close_page()` method for SNYK scanner

@@ -1,0 +1,259 @@
+IHACPA AUTOMATION CHANGES REPORT
+============================================================
+Generated: 2025-07-09 17:09:45
+Original file: ../02-Source-Data/2025-07-09 IHACPA Review of ALL existing PYTHON Packages.xlsx
+Dry run mode: False
+
+EXCEL FILE CHANGES REPORT
+==================================================
+
+Total packages modified: 78
+Total field changes: 78
+Most changed columns: H (78)
+
+DETAILED CHANGES BY PACKAGE:
+------------------------------
+
+📦 appdirs (Row 20):
+  🔄 Latest Release Date (Col H): '2020-05-11 07:59:49.500000' → '2020-05-11 07:59:49.499913'
+
+📦 asn1crypto (Row 25):
+  🔄 Latest Release Date (Col H): '2022-03-15 14:46:51.056000' → '2022-03-15 14:46:51.055960'
+
+📦 backports.shutil-get-terminal-size (Row 37):
+  🔄 Latest Release Date (Col H): '2014-08-19 18:42:51.908000' → '2014-08-19 18:42:51.908309'
+
+📦 backports.weakref (Row 39):
+  🔄 Latest Release Date (Col H): '2017-09-17 20:58:26.558000' → '2017-09-17 20:58:26.557727'
+
+📦 conda (Row 68):
+  🔄 Latest Release Date (Col H): '2017-04-22 23:38:35.809000' → '2017-04-22 23:38:35.809127'
+
+📦 conda-content-trust (Row 70):
+  🔄 Latest Release Date (Col H): '2021-05-12 19:25:22.560000' → '2021-05-12 19:25:22.559572'
+
+📦 psycopg2 (Row 290):
+  🔄 Latest Release Date (Col H): '2024-10-16 11:18:24.430000' → '2024-10-16 11:18:24.430276'
+
+📦 psycopg2-binary (Row 291):
+  🔄 Latest Release Date (Col H): '2024-10-16 11:18:58.648000' → '2024-10-16 11:18:58.647504'
+
+📦 ptyprocess (Row 292):
+  🔄 Latest Release Date (Col H): '2020-12-28 15:15:28.350000' → '2020-12-28 15:15:28.350375'
+
+📦 py (Row 294):
+  🔄 Latest Release Date (Col H): '2021-11-04 17:17:00.152000' → '2021-11-04 17:17:00.152107'
+
+📦 py-cpuinfo (Row 295):
+  🔄 Latest Release Date (Col H): '2022-10-25 20:38:27.637000' → '2022-10-25 20:38:27.636760'
+
+📦 pyasn1 (Row 297):
+  🔄 Latest Release Date (Col H): '2024-09-11 16:00:36.123000' → '2024-09-11 16:00:36.122570'
+
+📦 pycodestyle (Row 299):
+  🔄 Latest Release Date (Col H): '2025-06-20 18:49:47.492000' → '2025-06-20 18:49:47.491704'
+
+📦 pycosat (Row 300):
+  🔄 Latest Release Date (Col H): '2023-10-03 15:45:48.059000' → '2023-10-03 15:45:48.058830'
+
+📦 pycparser (Row 301):
+  🔄 Latest Release Date (Col H): '2024-03-30 13:22:20.476000' → '2024-03-30 13:22:20.476234'
+
+📦 pyflakes (Row 309):
+  🔄 Latest Release Date (Col H): '2025-06-20 18:45:26.938000' → '2025-06-20 18:45:26.937749'
+
+📦 pylint-venv (Row 316):
+  🔄 Latest Release Date (Col H): '2024-10-27 10:42:13.066000' → '2024-10-27 10:42:13.065598'
+
+📦 PyNaCl (Row 318):
+  🔄 Latest Release Date (Col H): '2022-01-07 22:05:49.156000' → '2022-01-07 22:05:49.156134'
+
+📦 pyodbc (Row 319):
+  🔄 Latest Release Date (Col H): '2024-10-16 01:39:23.698000' → '2024-10-16 01:39:23.697724'
+
+📦 PyQt5-sip (Row 324):
+  🔄 Latest Release Date (Col H): '2025-02-02 17:12:35.787000' → '2025-02-02 17:12:35.786620'
+
+📦 pyrsistent (Row 327):
+  🔄 Latest Release Date (Col H): '2023-10-25 21:06:04.580000' → '2023-10-25 21:06:04.579823'
+
+📦 PySocks (Row 328):
+  🔄 Latest Release Date (Col H): '2019-09-20 02:06:20.927000' → '2019-09-20 02:06:20.927323'
+
+📦 python-jsonrpc-server (Row 342):
+  🔄 Latest Release Date (Col H): '2020-09-08 19:22:48.170000' → '2020-09-08 19:22:48.170443'
+
+📦 pytimeparse (Row 350):
+  🔄 Latest Release Date (Col H): '2018-05-18 17:40:41.280000' → '2018-05-18 17:40:41.280151'
+
+📦 pytz (Row 352):
+  🔄 Latest Release Date (Col H): '2025-03-25 02:24:58.468000' → '2025-03-25 02:24:58.468169'
+
+📦 pywin32 (Row 355):
+  🔄 Latest Release Date (Col H): '2025-03-17 00:55:46.784000' → '2025-03-17 00:55:46.783807'
+
+📦 pywin32-ctypes (Row 356):
+  🔄 Latest Release Date (Col H): '2024-08-14 10:15:33.187000' → '2024-08-14 10:15:33.187242'
+
+📦 pywinpty (Row 357):
+  🔄 Latest Release Date (Col H): '2025-02-03 21:56:25.008000' → '2025-02-03 21:56:25.008294'
+
+📦 PyYAML (Row 358):
+  🔄 Latest Release Date (Col H): '2024-08-06 20:31:40.178000' → '2024-08-06 20:31:40.178426'
+
+📦 qtconsole (Row 363):
+  🔄 Latest Release Date (Col H): '2024-10-28 23:59:24.192000' → '2024-10-28 23:59:24.191650'
+
+📦 queuelib (Row 365):
+  🔄 Latest Release Date (Col H): '2025-03-31 12:18:43.527000' → '2025-03-31 12:18:43.526763'
+
+📦 regex (Row 368):
+  🔄 Latest Release Date (Col H): '2024-11-06 20:08:57.575000' → '2024-11-06 20:08:57.575371'
+
+📦 retrying (Row 372):
+  🔄 Latest Release Date (Col H): '2025-06-24 10:08:57.795000' → '2025-06-24 10:08:57.794830'
+
+📦 rfc3986-validator (Row 374):
+  🔄 Latest Release Date (Col H): '2019-10-28 16:00:13.976000' → '2019-10-28 16:00:13.976195'
+
+📦 Rtree (Row 376):
+  🔄 Latest Release Date (Col H): '2025-03-05 23:31:29.885000' → '2025-03-05 23:31:29.884826'
+
+📦 ruamel-yaml-conda (Row 378):
+  🔄 Latest Release Date (Col H): '2021-11-01 20:34:47.988000' → '2021-11-01 20:34:47.987597'
+
+📦 SAS-kernel (Row 382):
+  🔄 Latest Release Date (Col H): '2022-12-01 21:47:14.797000' → '2022-12-01 21:47:14.797417'
+
+📦 sas7bdat (Row 383):
+  🔄 Latest Release Date (Col H): '2019-07-15 15:29:53.504000' → '2019-07-15 15:29:53.504170'
+
+📦 simplegeneric (Row 397):
+  🔄 Latest Release Date (Col H): '2012-04-01 23:39:06.147000' → '2012-04-01 23:39:06.146671'
+
+📦 six (Row 400):
+  🔄 Latest Release Date (Col H): '2024-12-04 17:35:26.476000' → '2024-12-04 17:35:26.475808'
+
+📦 slicer (Row 401):
+  🔄 Latest Release Date (Col H): '2024-03-09 07:03:07.708000' → '2024-03-09 07:03:07.708440'
+
+📦 snowballstemmer (Row 404):
+  🔄 Latest Release Date (Col H): '2025-05-09 16:34:50.372000' → '2025-05-09 16:34:50.371517'
+
+📦 sortedcollections (Row 405):
+  🔄 Latest Release Date (Col H): '2021-01-18 22:15:15.360000' → '2021-01-18 22:15:15.360194'
+
+📦 sortedcontainers (Row 406):
+  🔄 Latest Release Date (Col H): '2021-05-16 22:03:41.178000' → '2021-05-16 22:03:41.177807'
+
+📦 soupsieve (Row 407):
+  🔄 Latest Release Date (Col H): '2025-04-20 18:50:07.197000' → '2025-04-20 18:50:07.196708'
+
+📦 sphinxcontrib-jsmath (Row 412):
+  🔄 Latest Release Date (Col H): '2019-01-21 16:10:14.334000' → '2019-01-21 16:10:14.333769'
+
+📦 spyder (Row 416):
+  🔄 Latest Release Date (Col H): '2025-05-22 21:11:34.373000' → '2025-05-22 21:11:34.373473'
+
+📦 tblib (Row 427):
+  🔄 Latest Release Date (Col H): '2025-03-31 12:58:26.142000' → '2025-03-31 12:58:26.142278'
+
+📦 text-unidecode (Row 431):
+  🔄 Latest Release Date (Col H): '2019-08-30 21:37:03.544000' → '2019-08-30 21:37:03.543829'
+
+📦 threadpoolctl (Row 433):
+  🔄 Latest Release Date (Col H): '2025-03-13 13:49:21.846000' → '2025-03-13 13:49:21.846456'
+
+📦 toml (Row 438):
+  🔄 Latest Release Date (Col H): '2020-11-01 01:40:20.673000' → '2020-11-01 01:40:20.672915'
+
+📦 tomli (Row 439):
+  🔄 Latest Release Date (Col H): '2024-11-27 22:37:54.956000' → '2024-11-27 22:37:54.956192'
+
+📦 tomlkit (Row 440):
+  🔄 Latest Release Date (Col H): '2025-06-05 07:13:43.547000' → '2025-06-05 07:13:43.546763'
+
+📦 toolz (Row 441):
+  🔄 Latest Release Date (Col H): '2024-10-04 16:17:01.533000' → '2024-10-04 16:17:01.533319'
+
+📦 tornado (Row 442):
+  🔄 Latest Release Date (Col H): '2025-05-22 18:15:20.863000' → '2025-05-22 18:15:20.862543'
+
+📦 twisted-iocpsupport (Row 447):
+  🔄 Latest Release Date (Col H): '2025-02-27 19:03:43.059000' → '2025-02-27 19:03:43.058889'
+
+📦 typed-ast (Row 448):
+  🔄 Latest Release Date (Col H): '2023-07-04 18:37:00.129000' → '2023-07-04 18:37:00.129323'
+
+📦 typing_extensions (Row 449):
+  🔄 Latest Release Date (Col H): '2025-07-04 13:28:32.744000' → '2025-07-04 13:28:32.743692'
+
+📦 tzdata (Row 450):
+  🔄 Latest Release Date (Col H): '2025-03-23 13:54:41.845000' → '2025-03-23 13:54:41.845043'
+
+📦 ujson (Row 452):
+  🔄 Latest Release Date (Col H): '2024-05-14 02:00:27.054000' → '2024-05-14 02:00:27.054412'
+
+📦 unicodecsv (Row 453):
+  🔄 Latest Release Date (Col H): '2015-09-22 22:00:19.517000' → '2015-09-22 22:00:19.516621'
+
+📦 uri-template (Row 455):
+  🔄 Latest Release Date (Col H): '2023-06-21 01:49:03.468000' → '2023-06-21 01:49:03.467606'
+
+📦 w3lib (Row 458):
+  🔄 Latest Release Date (Col H): '2025-01-27 14:22:09.422000' → '2025-01-27 14:22:09.421525'
+
+📦 webcolors (Row 461):
+  🔄 Latest Release Date (Col H): '2024-11-11 07:43:22.529000' → '2024-11-11 07:43:22.529489'
+
+📦 webencodings (Row 462):
+  🔄 Latest Release Date (Col H): '2017-04-05 20:21:32.582000' → '2017-04-05 20:21:32.581689'
+
+📦 whatthepatch (Row 465):
+  🔄 Latest Release Date (Col H): '2024-11-16 17:21:20.762000' → '2024-11-16 17:21:20.761566'
+
+📦 widgetsnbextension (Row 467):
+  🔄 Latest Release Date (Col H): '2025-04-10 13:01:23.087000' → '2025-04-10 13:01:23.086867'
+
+📦 win-inet-pton (Row 468):
+  🔄 Latest Release Date (Col H): '2019-02-19 17:46:22.183000' → '2019-02-19 17:46:22.182794'
+
+📦 win-unicode-console (Row 469):
+  🔄 Latest Release Date (Col H): '2016-06-25 19:48:54.050000' → '2016-06-25 19:48:54.050070'
+
+📦 wincertstore (Row 470):
+  🔄 Latest Release Date (Col H): '2021-06-08 11:20:50.598000' → '2021-06-08 11:20:50.597964'
+
+📦 wrapt (Row 471):
+  🔄 Latest Release Date (Col H): '2025-01-14 10:33:13.616000' → '2025-01-14 10:33:13.616338'
+
+📦 xlrd (Row 474):
+  🔄 Latest Release Date (Col H): '2025-06-14 08:46:37.766000' → '2025-06-14 08:46:37.766025'
+
+📦 XlsxWriter (Row 475):
+  🔄 Latest Release Date (Col H): '2025-06-17 08:59:13.453000' → '2025-06-17 08:59:13.453101'
+
+📦 xlwt (Row 477):
+  🔄 Latest Release Date (Col H): '2017-08-22 06:47:15.281000' → '2017-08-22 06:47:15.281159'
+
+📦 xmltodict (Row 478):
+  🔄 Latest Release Date (Col H): '2024-10-16 06:10:27.649000' → '2024-10-16 06:10:27.649111'
+
+📦 xyzservices (Row 479):
+  🔄 Latest Release Date (Col H): '2025-04-25 10:38:08.469000' → '2025-04-25 10:38:08.468801'
+
+📦 y-py (Row 480):
+  🔄 Latest Release Date (Col H): '2023-10-05 05:57:47.818000' → '2023-10-05 05:57:47.817978'
+
+📦 zict (Row 484):
+  🔄 Latest Release Date (Col H): '2023-04-17 21:41:13.444000' → '2023-04-17 21:41:13.444294'
+
+CHANGES BY COLUMN:
+--------------------
+Column H: 78 changes
+
+PROCESSING STATISTICS:
+------------------------------
+Packages processed: 87
+Packages failed: 0
+Success rate: 100.0%

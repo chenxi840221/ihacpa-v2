@@ -1,0 +1,13 @@
+# Environment variables - do not commit sensitive keys
+.env
+*.env
+.env.local
+.env.*.local
+
+# API Keys and credentials
+**/secrets/
+**/*_key*
+**/*_secret*
+
+# Azure OpenAI test files with hardcoded keys
+test_*_with_keys.py

@@ -263,7 +263,8 @@ class EnhancedExcelProcessor:
     async def _process_single_package_enhanced(self, package: Dict[str, Any]) -> Dict[str, Any]:
         """Process a single package with enhanced column functionality"""
         package_name = package.get('package_name', '')
-        current_version = package.get('version', '')
+        # Convert version to string to handle float/int from Excel
+        current_version = str(package.get('version', ''))
         row_number = package.get('row_number', 0)
         
         if not package_name:
